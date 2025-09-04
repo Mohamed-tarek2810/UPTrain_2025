@@ -1,59 +1,185 @@
 ﻿@model IEnumerable<Lesson>
-
 @{
-    ViewData["Title"] = "Lessons";
-    var courseId = ViewBag.CourseId; 
+    ViewData["Title"] = "Manage Lessons";
 }
 
-<h2>Lessons</h2>
+<style>
+    body {
+        color: #fff; /* make all text white */
+    }
 
-<p>
-    <a asp-action="Create" asp-route-courseId="@courseId" class="btn btn-primary">
-        Create New Lesson
-    </a>
-</p>
+    .card {
+        border-radius: 10px;
+        background-color: #2c2f33; /* dark background */
+        color: #fff; /* white text */
+    }
 
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>Title</th>
-            <th>Video URL</th>
-            <th>Order</th>
-            <th>Course</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Any())
-        {
-            foreach (var item in Model)
+    .card-header {
+        font-size: 0.95rem;
+        background-color: #23272a; /* darker for header */
+        color: #fff;
+        border-bottom: 1px solid #444;
+    }
+
+    .badge {
+        font-size: 0.8rem;
+        padding: 5px 8px;
+    }
+
+    .btn-group .btn {
+        padding: 3px 8px;
+    }
+
+    .filter-box {
+        background-color: #23272a;
+        color: #fff;
+        border: 1px solid #444;
+    }
+
+        .filter-box label,
+        .filter-box span {
+            color: #fff;
+        }
+
+    .form-select {
+        background-color: #2c2f33;
+        color: #fff;
+        border: 1px solid #555;
+    }
+
+        .form-select option {
+            background-color: #2c2f33;
+            color: #fff;
+        }
+
+    .text-muted {
+        color: #ddd !important; /* lighter gray closer to white */
+    }
+</style>
+
+<div class="container-fluid mt-4">
+
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-play-circle me-2 text-primary"></i> All Lessons</h2>
+               
+            </div>
+            <div>
+                <a asp-action="Create" asp-route-courseId="@ViewBag.SelectedCourseId" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add New Lesson
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="p-3 rounded filter-box">
+                <form method="get" class="d-flex gap-2 align-items-center">
+                    <label class="mb-0 fw-bold"><i class="fas fa-filter me-2"></i>Filter:</label>
+                    <select name="courseId" class="form-select" style="max-width: 300px;" onchange="this.form.submit()">
+                        <option value="">All Courses</option>
+                        @foreach (SelectListItem course in ViewBag.Courses)
+                        {
+                            <option value="@course.Value" selected="@course.Selected">@course.Text</option>
+                        }
+                    </select>
+                    <span class="ms-auto fw-bold">Total Lessons: @Model.Count()</span>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var lesson in Model.OrderBy(l => l.OrderIndex))
             {
-                <tr>
-                    <td>@item.Title</td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(item.VideoUrl))
-                        {
-                            <a href="@item.VideoUrl" target="_blank">Watch</a>
-                        }
-                        else
-                        {
-                            <span class="text-muted">No Video</span>
-                        }
-                    </td>
-                    <td>@item.OrderIndex</td>
-                    <td>@item.Course?.Title</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.LessonId" class="btn btn-sm btn-warning">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.LessonId" class="btn btn-sm btn-danger">Delete</a>
-                    </td>
-                </tr>
+                <div class="col-xl-4 col-lg-6 col-md-12 mb-4">
+                    <div class="card shadow-sm h-100 border-0">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold">
+                                <span class="badge bg-primary me-2">@lesson.OrderIndex</span>
+                                @lesson.Title
+                            </h6>
+                            <div class="btn-group btn-group-sm">
+                                <a asp-action="Edit" asp-route-id="@lesson.LessonId" class="btn btn-warning text-dark">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@lesson.LessonId"
+                                   class="btn btn-sm btn-danger d-flex align-items-center gap-1" title="Delete">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="mb-2">
+                                <i class="fas fa-book me-1"></i>
+                                @(lesson.Course?.Title ?? "Unknown Course")
+                            </p>
+
+                            @if (!string.IsNullOrEmpty(lesson.Content))
+                            {
+                                <p class="small">
+                                    @(lesson.Content.Length > 80 ? lesson.Content.Substring(0, 80) + "..." : lesson.Content)
+                                </p>
+                            }
+
+                            @if (!string.IsNullOrEmpty(lesson.VideoUrl))
+                            {
+                                <a href="@lesson.VideoUrl" target="_blank" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-play-circle me-1"></i>Watch
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">No Video</span>
+                            }
+                        </div>
+                    </div>
+                </div>
             }
-        }
-        else
-        {
-            <tr>
-                <td colspan="5" class="text-center text-muted">No lessons available.</td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-graduation-cap fa-5x text-muted mb-4"></i>
+                <h3>No Lessons Available</h3>
+                @if (ViewBag.SelectedCourseId != null)
+                {
+                    <p>No lessons found for this course.</p>
+                    <a asp-action="Create" asp-route-courseId="@ViewBag.SelectedCourseId" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Add First Lesson
+                    </a>
+                }
+                else
+                {
+                    <p>Start by selecting a course or creating the first lesson!</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Add New Lesson
+                    </a>
+                }
+            </div>
+        </div>
+    }
+</div>

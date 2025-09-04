@@ -1,41 +1,212 @@
 ﻿@model Lesson
-
 @{
-    ViewData["Title"] = "Create Lesson";
+    ViewData["Title"] = "Create New Lesson";
 }
 
-<h2>Create Lesson</h2>
+<style>
+    body {
+        background-color: black;
+    }
 
-<form asp-action="Create" method="post">
-    <input type="hidden" asp-for="CourseId" />
+    .create-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
 
-    <div class="mb-3">
-        <label asp-for="Title" class="form-label"></label>
-        <input asp-for="Title" type="text" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
+    .create-header {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: black
+        border-radius: 15px 15px 0 0;
+        padding: 25px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 2px solid black;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+    .btn {
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+    }
+
+    .course-info {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        border-radius: 10px;
+        padding: 15px;
+        color: black;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="card create-card">
+                <div class="create-header">
+                    <h2 class="mb-0">
+                        <i class="fas fa-plus-circle me-3"></i>Create New Lesson
+                    </h2>
+                    <p class="mb-0 mt-2 opacity-75">Add a new lesson to enhance your course content</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+
+                      
+                        <div class="mb-4">
+                            <label asp-for="CourseId" class="form-label">
+                                <i class="fas fa-book me-2 text-primary"></i>Select Course
+                            </label>
+                            <select asp-for="CourseId" class="form-select form-select-lg" asp-items="ViewBag.Courses">
+                                <option value="">-- Choose a Course --</option>
+                            </select>
+                            <span asp-validation-for="CourseId" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Select the course this lesson belongs to
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Title" class="form-label">
+                                <i class="fas fa-heading me-2 text-primary"></i>Lesson Title
+                            </label>
+                            <input asp-for="Title" type="text" class="form-control form-control-lg"
+                                   placeholder="Enter an engaging lesson title" maxlength="200" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                            <div class="form-text">
+                                Make it descriptive and engaging for your students
+                            </div>
+                        </div>
+
+                      
+                        <div class="mb-4">
+                            <label asp-for="VideoUrl" class="form-label">
+                                <i class="fas fa-video me-2 text-danger"></i>Video URL
+                            </label>
+                            <input asp-for="VideoUrl" type="url" class="form-control"
+                                   placeholder="" />
+                            <span asp-validation-for="VideoUrl" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="fas fa-lightbulb me-1 text-warning"></i>
+                                Add a YouTube, Vimeo, or direct video link (optional)
+                            </div>
+                        </div>
+
+                       
+                        <div class="mb-4">
+                            <label asp-for="Content" class="form-label">
+                                <i class="fas fa-align-left me-2 text-success"></i>Lesson Content
+                            </label>
+                            <textarea asp-for="Content" class="form-control" rows="8"
+                                      placeholder="Write your lesson content here...&#10;&#10;You can include:&#10;- Learning objectives&#10;- Key concepts&#10;- Examples&#10;- Additional resources"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                            <div class="form-text">
+                                Provide detailed content that complements your video
+                            </div>
+                        </div>
+
+                  
+                        <div class="mb-4">
+                            <label asp-for="OrderIndex" class="form-label">
+                                <i class="fas fa-sort-numeric-up me-2 text-info"></i>Lesson Order
+                            </label>
+                            <input asp-for="OrderIndex" type="number" class="form-control"
+                                   min="1" max="999" value="@(Model.OrderIndex > 0 ? Model.OrderIndex : 1)" />
+                            <span asp-validation-for="OrderIndex" class="text-danger"></span>
+                            <div class="form-text">
+                                Set the order of this lesson in the course sequence
+                            </div>
+                        </div>
+
+                    
+                        <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+                            <a asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Lessons
+                            </a>
+                            <div>
+                                
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-save me-2"></i>Create Lesson
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label asp-for="VideoUrl" class="form-label"></label>
-        <input asp-for="VideoUrl" type="url" class="form-control" />
-        <span asp-validation-for="VideoUrl" class="text-danger"></span>
+
+<div class="modal fade" id="videoPreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Video Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="videoContainer"></div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label asp-for="Content" class="form-label"></label>
-        <textarea asp-for="Content" class="form-control"></textarea>
-        <span asp-validation-for="Content" class="text-danger"></span>
-    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const videoUrlInput = document.querySelector('input[name="VideoUrl"]');
+        const courseSelect = document.querySelector('select[name="CourseId"]');
 
-    <div class="mb-3">
-        <label asp-for="OrderIndex" class="form-label"></label>
-        <input asp-for="OrderIndex" type="number" class="form-control" />
-        <span asp-validation-for="OrderIndex" class="text-danger"></span>
-    </div>
 
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-secondary">Back</a>
-</form>
+        if (videoUrlInput) {
+            videoUrlInput.addEventListener('blur', function() {
+                const url = this.value.trim();
+                if (url && !isValidVideoUrl(url)) {
+                    this.classList.add('is-invalid');
+  
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        }
+
+        if (courseSelect) {
+            courseSelect.addEventListener('change', function() {
+                const courseId = this.value;
+                if (courseId) {
+
+                }
+            });
+        }
+
+        function isValidVideoUrl(url) {
+            const videoPatterns = [
+                /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)/,
+                /^https?:\/\/(www\.)?vimeo\.com/,
+                /^https?:\/\/.*\.(mp4|webm|ogg)$/
+            ];
+            return videoPatterns.some(pattern => pattern.test(url));
+        }
+    });
+</script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
