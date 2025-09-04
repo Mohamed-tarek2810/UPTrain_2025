@@ -15,14 +15,13 @@ namespace UPTrain.Areas.Admin.Controllers
             _context = context;
         }
 
-        // GET: Categories
+       
         public async Task<IActionResult> Index()
         {
             var categories = await _context.Categories.ToListAsync();
             return View(categories);
         }
 
-        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -33,13 +32,13 @@ namespace UPTrain.Areas.Admin.Controllers
             return View(category);
         }
 
-        // GET: Categories/Create
+       
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Category category)
@@ -54,7 +53,7 @@ namespace UPTrain.Areas.Admin.Controllers
             return View(category);
         }
 
-        // GET: Categories/Edit/5
+       
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -64,8 +63,7 @@ namespace UPTrain.Areas.Admin.Controllers
 
             return View(category);
         }
-        // pushing courses to github
-        // POST: Categories/Edit/5
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Category category)
@@ -93,11 +91,11 @@ namespace UPTrain.Areas.Admin.Controllers
 
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var course = await _context.Courses.FirstOrDefaultAsync(c => c.CourseId == id);
+            var Categories = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
 
-            if (course is not null)
+            if (Categories is not null)
             {
-                _context.Courses.Remove(course);
+                _context.Categories.Remove(Categories);
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Course deleted successfully!";
