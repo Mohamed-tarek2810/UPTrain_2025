@@ -1,0 +1,456 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Dashboard</title>
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="~/img/5886141.png" rel="icon">
+    <style>
+        :root {
+            --primary-black: #1a1a1a;
+            --secondary-black: #2d2d2d;
+            --accent-color: #4f46e5;
+            --hover-color: #6366f1;
+            --text-light: #f8f9fa;
+            --border-color: #404040;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%) !important;
+            border-bottom: 2px solid var(--accent-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(79, 70, 229, 0.5);
+        }
+
+        .logout-btn {
+            background: linear-gradient(45deg, #dc2626, #ef4444);
+            border: none;
+            border-radius: 25px;
+            padding: 8px 20px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+            .logout-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 25px rgba(220, 38, 38, 0.5);
+                color: white;
+            }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            width: 280px;
+            min-height: 100vh;
+            border-right: 2px solid var(--accent-color);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+            .sidebar::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, rgba(79, 70, 229, 0.1), rgba(124, 58, 237, 0.1));
+                pointer-events: none;
+            }
+
+        .sidebar-title {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding: 0 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Navigation Buttons */
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--secondary-black), #3a3a3a);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .nav-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.3), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .nav-btn:hover::before {
+                left: 100%;
+            }
+
+            .nav-btn:hover {
+                background: linear-gradient(135deg, var(--accent-color), var(--hover-color));
+                border-color: var(--hover-color);
+                transform: translateX(5px);
+                box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+                color: white;
+            }
+
+            .nav-btn i {
+                margin-right: 12px;
+                font-size: 1.1rem;
+                width: 20px;
+                text-align: center;
+            }
+
+        /* Dropdown Styles */
+        .dropdown-btn {
+            position: relative;
+        }
+
+            .dropdown-btn::after {
+                content: '\f107';
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                position: absolute;
+                right: 15px;
+                transition: transform 0.3s ease;
+            }
+
+            .dropdown-btn.active::after {
+                transform: rotate(180deg);
+            }
+
+        .dropdown-menu-custom {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: var(--primary-black);
+            border-radius: 8px;
+            margin-left: 10px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+            .dropdown-menu-custom.show {
+                max-height: 300px;
+                margin-top: 5px;
+            }
+
+        .dropdown-item-custom {
+            display: block;
+            padding: 10px 15px;
+            color: #adb5bd;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            margin: 2px 5px;
+            transition: all 0.2s ease;
+        }
+
+            .dropdown-item-custom:hover {
+                background: linear-gradient(135deg, var(--accent-color), var(--hover-color));
+                color: white;
+                transform: translateX(3px);
+            }
+
+        /* Content Area */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            min-height: 100vh;
+        }
+
+        /* Special Logout Button in Sidebar */
+        .logout-nav-btn {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            border-color: #dc2626;
+            margin-top: 2rem;
+        }
+
+            .logout-nav-btn:hover {
+                background: linear-gradient(135deg, #b91c1c, #dc2626);
+                border-color: #b91c1c;
+            }
+
+     
+        {
+            width: 100%;
+            min-height: auto;
+        }
+
+        .main-content {
+            padding: 1rem;
+        }
+
+        }
+
+      
+
+        {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        }
+
+        .sidebar {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* Glow effects */
+        .nav-btn:hover,
+        .logout-btn:hover {
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.5), 0 0 40px rgba(79, 70, 229, 0.3), 0 0 60px rgba(79, 70, 229, 0.1);
+        }
+
+        .logout-nav-btn:hover {
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5), 0 0 40px rgba(220, 38, 38, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+            </a>
+            <div class="d-flex">
+                <a class="btn logout-btn" asp-area="Identity" asp-page="/Account/Logout">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar p-4">
+            <h5 class="sidebar-title">
+                <i class="fas fa-cogs me-2"></i>Management
+            </h5>
+
+            <nav class="nav flex-column">
+                
+                <a class="nav-btn" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+
+                
+                <div class="mb-2">
+                    <a href="#" class="nav-btn dropdown-btn" onclick="toggleDropdown('usersDropdown', this)">
+                        <i class="fas fa-users"></i>
+                        Users Management
+                    </a>
+                    <div id="usersDropdown" class="dropdown-menu-custom">
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Users" asp-action="Index">
+                            <i class="fas fa-list me-2"></i>All Users
+                        </a>
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Users" asp-action="Create">
+                            <i class="fas fa-user-plus me-2"></i>Add New User
+                        </a>
+                        
+                       
+                    </div>
+                </div>
+
+                
+                <div class="mb-2">
+                    <a href="#" class="nav-btn dropdown-btn" onclick="toggleDropdown('coursesDropdown', this)">
+                        <i class="fas fa-graduation-cap"></i>
+                        Courses Management
+                    </a>
+                    <div id="coursesDropdown" class="dropdown-menu-custom">
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Courses" asp-action="Index">
+                            <i class="fas fa-list me-2"></i>All Courses
+                        </a>
+                      
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Courses" asp-action="Create">
+                            <i class="fas fa-tags me-2"></i> Create Courses
+                        </a>
+                    </div>
+                </div>
+
+                
+                <div class="mb-2">
+                    <a href="#" class="nav-btn dropdown-btn" onclick="toggleDropdown('lessonsDropdown', this)">
+                        <i class="fas fa-book-open"></i>
+                        Lessons Management
+                    </a>
+                    <div id="lessonsDropdown" class="dropdown-menu-custom">
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Lessons" asp-action="Index">
+                            <i class="fas fa-list me-2"></i>All Lessons
+                        </a>
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Lessons" asp-action="Create">
+                            <i class="fas fa-plus me-2"></i>Create Lesson
+                        </a>
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Lessons" asp-action="Details">
+                            <i class="fas fa-file-alt me-2"></i>Lesson Details
+                        </a>
+                    </div>
+                </div>
+
+               
+                <div class="mb-2">
+                    <a href="#" class="nav-btn dropdown-btn" onclick="toggleDropdown('quizzesDropdown', this)">
+                        <i class="fas fa-question-circle"></i>
+                        Quizzes Management
+                    </a>
+                    <div id="quizzesDropdown" class="dropdown-menu-custom">
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Quizzes" asp-action="Index">
+                            <i class="fas fa-list me-2"></i>All Quizzes
+                        </a>
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Quizzes" asp-action="Create">
+                            <i class="fas fa-plus me-2"></i>Create Quiz
+                        </a>
+                        <a class="dropdown-item-custom" asp-area="Admin" asp-controller="Quizzes" asp-action="Results">
+                            <i class="fas fa-chart-bar me-2"></i>Quiz Results
+                        </a>
+                    </div>
+                </div>
+
+               
+                <a class="nav-btn" asp-area="Admin" asp-controller="Enrollments" asp-action="Index">
+                    <i class="fas fa-clipboard-list"></i>
+                    Enrollments
+                </a>
+
+                <a class="nav-btn" asp-area="Admin" asp-controller="Categories" asp-action="Index">
+                    <i class="fas fa-tags"></i>
+                    Categories
+                </a>
+
+
+            
+                <a class="nav-btn" asp-area="Admin" asp-controller="Users" asp-action="Index">
+                    <i class="fas fa-users"></i>
+                    Users
+                </a>
+
+                <a class="nav-btn" asp-area="Admin" asp-controller="Courses" asp-action="Index">
+                    <i class="fas fa-graduation-cap"></i>
+                    Courses
+                </a>
+
+                <a class="nav-btn" asp-area="Admin" asp-controller="Lessons" asp-action="Index">
+                    <i class="fas fa-book-open"></i>
+                    Lessons
+                </a>
+
+                <a class="nav-btn" asp-area="Admin" asp-controller="Quizzes" asp-action="Index">
+                    <i class="fas fa-question-circle"></i>
+                    Quizzes
+                </a>
+
+                <!-- Logout -->
+                <a class="nav-btn logout-nav-btn" asp-area="Identity" asp-page="/Account/Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+             @RenderBody() 
+          
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleDropdown(dropdownId, button) {
+            event.preventDefault();
+
+            const dropdown = document.getElementById(dropdownId);
+            const isActive = button.classList.contains('active');
+
+            // Close all other dropdowns
+            document.querySelectorAll('.dropdown-menu-custom').forEach(menu => {
+                menu.classList.remove('show');
+            });
+            document.querySelectorAll('.dropdown-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Toggle current dropdown
+            if (!isActive) {
+                dropdown.classList.add('show');
+                button.classList.add('active');
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown-btn')) {
+                document.querySelectorAll('.dropdown-menu-custom').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+                document.querySelectorAll('.dropdown-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+            }
+        });
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

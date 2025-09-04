@@ -1,0 +1,43 @@
+﻿@model IEnumerable<UPTrain.Models.Question>
+@{
+    ViewData["Title"] = "Questions";
+    var quizId = ViewBag.QuizId;
+    var quizTitle = ViewBag.QuizTitle;
+}
+
+<h2>Questions for Quiz: @quizTitle</h2>
+
+<a asp-action="Create" asp-route-quizId="@quizId" class="btn btn-success mb-3">Add New Question</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Question</th>
+            <th>Option A</th>
+            <th>Option B</th>
+            <th>Option C</th>
+            <th>Option D</th>
+            <th>Correct Answer</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var question in Model)
+        {
+            <tr>
+                <td>@question.QuestionText</td>
+                <td>@question.OptionA</td>
+                <td>@question.OptionB</td>
+                <td>@question.OptionC</td>
+                <td>@question.OptionD</td>
+                <td>@question.CorrectAnswer</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@question.QuestionId" class="btn btn-primary btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@question.QuestionId" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-controller="Quizzes" asp-action="Index" asp-route-courseId="@Model.FirstOrDefault()?.Quiz?.CourseId" class="btn btn-secondary">Back to Quizzes</a>

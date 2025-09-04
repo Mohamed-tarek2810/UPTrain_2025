@@ -1,0 +1,196 @@
+﻿@model IEnumerable<UPTrain.Models.Courses>
+@{
+    ViewData["Title"] = "Courses Management";
+}
+<style>
+    body {
+        background-color: #e0e0e0; /* خلفية سوداء غامقة */
+        color: #e0e0e0; /* لون النصوص فاتح */
+    }
+
+    .card {
+        background-color: #1e1e1e; /* لون البطاقة داكن قليلاً */
+        color: #e0e0e0;
+        border: 1px solid #333; /* حدود خفيفة للبطاقة */
+    }
+
+    .table {
+        color: #e0e0e0; /* لون النصوص في الجدول */
+    }
+
+        .table thead th {
+            background-color: #2a2a2a !important; /* لون رأس الجدول */
+            color: #fff;
+            border-bottom: 1px solid #444;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(13, 202, 240, 0.08); /* لون هوفر خفيف */
+        }
+
+        .table tbody td {
+            border-top: 1px solid #333; /* خط فاصل بين الصفوف */
+        }
+
+    h2 {
+        color: #e0e0e0; /* لون عنوان الصفحة */
+    }
+
+    .btn-primary {
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+    }
+
+        .btn-primary:hover {
+            background-color: #0069d9 !important;
+            border-color: #0062cc !important;
+        }
+
+    .btn-danger {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333 !important;
+            border-color: #bd2130 !important;
+        }
+
+    .btn-group .btn {
+        font-size: 0.85rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 6px;
+        transition: 0.2s;
+        color: #fff; /* لون أيقونات الأزرار */
+    }
+
+    .badge.bg-info {
+        background-color: #0dcaf0 !important;
+        color: #fff;
+    }
+
+    .course-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .text-muted {
+        color: #999 !important; /* لون النص في حالة عدم وجود دورات */
+    }
+
+    /* Hover effect on table rows */
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 202, 240, 0.1);
+    }
+</style>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Courses Management</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New Course
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Img</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Created By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var course in Model)
+                            {
+                                <tr>
+                                     <td> 
+                                         @if (!string.IsNullOrEmpty(course.ImageUrl)) 
+                                         { 
+                                             <img src="/img/@course.ImageUrl" 
+                                                  class="course-image img-thumbnail" 
+                                                  alt="@course.Title" 
+                                                  onerror="this.src='/images/default-course.jpg'; this.onerror=null;" /> 
+                                         } 
+                                         else 
+                                         { 
+                                             <div class="bg-secondary rounded d-flex align-items-center justify-content-center" 
+                                                  style="width: 60px; height: 60px;">
+                                                 <i class="fas fa-image text-white"></i> 
+                                             </div> 
+                                         }
+                                     </td> 
+                                    <td><strong>@course.Title</strong></td>
+                                    <td><span class="badge bg-info">@course.Category</span></td>
+                                    <td>
+                                        @{
+                                            var shortDescription = course.Description?.Length > 50
+                                            ? course.Description.Substring(0, 50) + "..."
+                                            : course.Description;
+                                        }
+                                        @shortDescription
+                                    </td>
+                                    <td>@(course.CreatedBy?.UserName ?? "Unknown")</td>
+
+
+                                    
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-route-id="@course.CourseId"
+                                               class="btn btn-sm btn-primary d-flex align-items-center gap-1 me-2" title="Edit">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+
+                                            <a asp-action="Delete" asp-route-id="@course.CourseId"
+                                               class="btn btn-sm btn-danger d-flex align-items-center gap-1" title="Delete">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No courses found</h4>
+            <p class="text-muted">Start by creating your first course</p>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create First Course
+            </a>
+        </div>
+    }
+</div>
+
+

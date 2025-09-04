@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Lesson>
+
+@{
+    ViewData["Title"] = "Lessons";
+    var courseId = ViewBag.CourseId; 
+}
+
+<h2>Lessons</h2>
+
+<p>
+    <a asp-action="Create" asp-route-courseId="@courseId" class="btn btn-primary">
+        Create New Lesson
+    </a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Title</th>
+            <th>Video URL</th>
+            <th>Order</th>
+            <th>Course</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.VideoUrl))
+                        {
+                            <a href="@item.VideoUrl" target="_blank">Watch</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Video</span>
+                        }
+                    </td>
+                    <td>@item.OrderIndex</td>
+                    <td>@item.Course?.Title</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.LessonId" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.LessonId" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">No lessons available.</td>
+            </tr>
+        }
+    </tbody>
+</table>

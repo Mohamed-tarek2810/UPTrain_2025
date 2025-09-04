@@ -1,0 +1,49 @@
+﻿@model UPTrain.Models.Question
+
+@{
+    ViewData["Title"] = "Create Question";
+}
+
+<h2>Create New Question</h2>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="QuizId" />
+
+    <div class="mb-3">
+        <label asp-for="QuestionText" class="form-label"></label>
+        <textarea asp-for="QuestionText" class="form-control"></textarea>
+        <span asp-validation-for="QuestionText" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="OptionA" class="form-label"></label>
+        <input asp-for="OptionA" class="form-control" type="text" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="OptionB" class="form-label"></label>
+        <input asp-for="OptionB" class="form-control" type="text" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="OptionC" class="form-label"></label>
+        <input asp-for="OptionC" class="form-control" type="text" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="OptionD" class="form-label"></label>
+        <input asp-for="OptionD" class="form-control" type="text" />
+    </div>
+
+    
+    <div class="mb-3">
+        <label asp-for="CorrectAnswer" class="form-label"></label>
+        <select asp-for="CorrectAnswer" class="form-select" asp-items="Html.GetEnumSelectList<UPTrain.Models.AnswerOption>()">
+            <option value="">-- Select Correct Answer --</option>
+        </select>
+        <span asp-validation-for="CorrectAnswer" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" asp-route-quizId="@Model.QuizId" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Quiz>
+@{
+    ViewData["Title"] = "Quizzes";
+    var courseId = ViewBag.CourseId;
+}
+
+<h2>Quizzes for @Model.FirstOrDefault()?.Course?.Title</h2>
+<a asp-action="Create" asp-route-courseId="@courseId" class="btn btn-success mb-3">Add New Quiz</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Quiz Title</th>
+            <th>Course</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var quiz in Model)
+        {
+            <tr>
+                <td>@quiz.Title</td>
+                <td>@quiz.Course?.Title</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@quiz.QuizId" class="btn btn-primary btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@quiz.QuizId" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-controller="Courses" asp-action="Index" class="btn btn-secondary">Back to Courses</a>

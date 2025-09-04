@@ -1,0 +1,120 @@
+﻿@model UPTrain.Models.Courses
+@{
+    ViewData["Title"] = "Edit Course";
+}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .edit-course-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+        .edit-course-card .card-header {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: 600;
+            font-size: 1.4rem;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        border-radius: 8px;
+        padding: 0.5rem 1.2rem;
+        font-size: 1rem;
+    }
+
+    .btn-secondary {
+        border-radius: 8px;
+        padding: 0.5rem 1.2rem;
+        font-size: 1rem;
+    }
+
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+
+    {
+        max-width: 700px;
+        margin: 2rem auto;
+    }
+
+    }
+</style>
+
+<div class="edit-course-card card mt-5">
+    <div class="card-header">
+        <i class="fas fa-edit"></i> Edit Course
+    </div>
+    <div class="card-body p-4">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="CourseId" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" placeholder="Enter course title" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Category" class="form-label"></label>
+                <input asp-for="Category" class="form-control" placeholder="Enter category" />
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label"></label>
+                <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                <div class="form-text">Enter a valid image URL for course thumbnail</div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="5" placeholder="Enter course description"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Update Course
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

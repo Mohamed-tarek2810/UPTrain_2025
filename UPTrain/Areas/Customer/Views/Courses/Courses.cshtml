@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Courses>
+
+@{
+    ViewData["Title"] = "Courses";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center fw-bold text-primary">✨ Available Courses</h2>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var course in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-lg border-0 rounded-4 course-card">
+
+
+                    <img src="/img/@course.ImageUrl"
+                         class="course-image" alt="@course.Title"
+                         onerror="this.src='/images/default-course.jpg'; this.onerror=null;" />
+
+
+                   
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold text-dark">@course.Title</h5>
+
+                        <h6 class="text-muted mb-2">
+                            <i class="bi bi-tag-fill text-primary"></i>
+                            @course.Category
+                        </h6>
+
+                        <p class="card-text flex-grow-1 text-secondary" style="font-size: 0.95rem;">
+                            @if (!string.IsNullOrEmpty(course.Description) && course.Description.Length > 120)
+                            {
+                                @($"{course.Description.Substring(0, 120)}...")
+                            }
+                            else
+                            {
+                                @course.Description
+                            }
+                        </p>
+
+                        <a asp-action="CoursesDetails"
+                           asp-route-id="@course.CourseId"
+                           class="btn btn-primary mt-auto w-100 fw-semibold rounded-pill shadow-sm">
+                            <i class="bi bi-eye-fill"></i> View Details
+                        </a>
+                    </div>
+
+                    
+                    <div class="card-footer bg-light text-muted small text-center border-0 rounded-bottom-4">
+                        <i class="bi bi-person-circle"></i>
+                        Created By: <span class="fw-semibold">@course.CreatedBy?.UserName</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<style>
+    .course-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-card .card-body h5 {
+            color: #0d6efd;
+        }
+
+        .course-card .btn-primary {
+            background: linear-gradient(45deg, #0d6efd, #00b4d8);
+            border: none;
+            transition: 0.3s ease;
+        }
+
+            .course-card .btn-primary:hover {
+                background: linear-gradient(45deg, #0077b6, #0096c7);
+                transform: scale(1.05);
+            }
+</style>

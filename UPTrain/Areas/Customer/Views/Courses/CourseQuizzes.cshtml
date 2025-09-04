@@ -1,0 +1,44 @@
+﻿@model UPTrain.Models.Courses
+
+<div class="container mt-5">
+    <h2>@Model.Title - Quizzes</h2>
+
+    @if (Model.Quizzes != null && Model.Quizzes.Any())
+    {
+        foreach (var quiz in Model.Quizzes)
+        {
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4>@quiz.Title</h4>
+                </div>
+                <div class="card-body">
+                    @if (quiz.Questions != null && quiz.Questions.Any())
+                    {
+                        <ol>
+                            @foreach (var q in quiz.Questions)
+                            {
+                                <li class="mb-3">
+                                    <p><strong>@q.QuestionText</strong></p>
+                                    <ul>
+                                        <li>A) @q.OptionA</li>
+                                        <li>B) @q.OptionB</li>
+                                        <li>C) @q.OptionC</li>
+                                        <li>D) @q.OptionD</li>
+                                    </ul>
+                                </li>
+                            }
+                        </ol>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No questions in this quiz yet.</p>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-muted">No quizzes found for this course.</p>
+    }
+</div>

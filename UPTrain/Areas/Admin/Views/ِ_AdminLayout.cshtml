@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - @ViewBag.Title</title>
+
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/Admin/Home">Admin Dashboard</a>
+            <div class="d-flex">
+                <a class="btn btn-outline-light btn-sm" href="/Identity/Account/Logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+
+        <div class="bg-light border-end vh-100 p-3" style="width: 250px;">
+            <h5 class="text-secondary">Management</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="/Admin/Home">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Admin/Users">Users</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Admin/Courses">Courses</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Admin/Quizzes">Quizzes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Admin/Enrollments">Enrollments</a></li>
+                <li class="nav-item"><a class="nav-link text-danger" href="/Identity/Account/Logout">Logout</a></li>
+            </ul>
+        </div>
+
+
+        <div>
+            @RenderBody()
+        </div>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

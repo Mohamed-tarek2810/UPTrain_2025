@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center text-light">📊 Admin Dashboard</h1>
+
+    <div class="row g-4">
+        <!-- Courses -->
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="card text-center shadow-lg p-4 bg-dark text-white rounded dashboard-card">
+                <div class="mb-3">
+                    <i class="fas fa-book fa-3x text-info"></i>
+                </div>
+                <h4 class="text-info">Total Courses</h4>
+                <p class="display-4 text-primary">@ViewBag.TotalCourses</p>
+            </div>
+        </div>
+
+        <!-- Users -->
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="card text-center shadow-lg p-4 bg-dark text-white rounded dashboard-card">
+                <div class="mb-3">
+                    <i class="fas fa-users fa-3x text-success"></i>
+                </div>
+                <h4 class="text-success">Total Users</h4>
+                <p class="display-4 text-danger">@ViewBag.TotalUsers</p>
+            </div>
+        </div>
+
+        <!-- Enrollments -->
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="card text-center shadow-lg p-4 bg-dark text-white rounded dashboard-card">
+                <div class="mb-3">
+                    <i class="fas fa-clipboard-list fa-3x text-warning"></i>
+                </div>
+                <h4 class="text-warning">Total Enrollments</h4>
+                <p class="display-4 text-info">@ViewBag.TotalEnrollments</p>
+            </div>
+        </div>
+
+        <!-- Quizzes -->
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="card text-center shadow-lg p-4 bg-dark text-white rounded dashboard-card">
+                <div class="mb-3">
+                    <i class="fas fa-question-circle fa-3x text-danger"></i>
+                </div>
+                <h4 class="text-danger">Total Quizzes</h4>
+                <p class="display-4 text-success">@ViewBag.TotalQuizzes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FontAwesome Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<style>
+    body {
+        background-color: #121212;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-card {
+        border: none;
+        border-radius: 15px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.5);
+        }
+</style>
+
+<style>
+    body {
+        background-color: black;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h1 {
+        font-weight: 700;
+        color: #fff; /* العنوان أبيض */
+    }
+
+    .dashboard-card {
+        background-color: #212529; /* الكارت أسود */
+        border: none;
+        border-radius: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        min-height: 180px; /* كروت أكبر */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .dashboard-card h4 {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .dashboard-card p.display-4 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+    /* ألوان مختلفة لكل كارت */
+    .card-courses h4 {
+        color: #0dcaf0;
+    }
+    /* أزرق سماوي */
+    .card-courses p {
+        color: #0d6efd;
+    }
+    /* أزرق غامق */
+
+    .card-users h4 {
+        color: #198754;
+    }
+    /* أخضر */
+    .card-users p {
+        color: #dc3545;
+    }
+    /* أحمر */
+
+    .card-enrollments h4 {
+        color: #ffc107;
+    }
+    /* أصفر */
+    .card-enrollments p {
+        color: #0dcaf0;
+    }
+    /* أزرق فاتح */
+
+    .card-quizzes h4 {
+        color: #dc3545;
+    }
+    /* أحمر */
+    .card-quizzes p {
+        color: #198754;
+    }
+    /* أخضر */
+</style>
+
