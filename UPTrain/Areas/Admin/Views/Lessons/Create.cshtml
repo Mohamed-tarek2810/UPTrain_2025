@@ -5,28 +5,36 @@
 
 <style>
     body {
-        background-color: black;
+        background-color: #212529; 
+        color: #f8f9fa; 
     }
 
     .create-card {
         border: none;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        background-color: #343a40;
     }
 
     .create-header {
         background: linear-gradient(135deg, #007bff, #0056b3);
-        color: black
+        color: white; 
         border-radius: 15px 15px 0 0;
         padding: 25px;
     }
 
     .form-control, .form-select {
         border-radius: 10px;
-        border: 2px solid black;
+        border: 2px solid #495057; 
         padding: 12px 15px;
         transition: all 0.3s ease;
+        background-color: #495057; 
+        color: #f8f9fa; 
     }
+
+        .form-control::placeholder {
+            color: #adb5bd; 
+        }
 
         .form-control:focus, .form-select:focus {
             border-color: #007bff;
@@ -41,7 +49,7 @@
 
     .form-label {
         font-weight: 600;
-        color: #495057;
+        color: #f8f9fa;
         margin-bottom: 8px;
     }
 
@@ -49,8 +57,29 @@
         background: linear-gradient(45deg, #28a745, #20c997);
         border-radius: 10px;
         padding: 15px;
-        color: black;
+        color: white;
         margin-bottom: 20px;
+    }
+
+    .form-text {
+        color: #adb5bd;
+    }
+
+    
+    .text-primary {
+        color: #007bff !important;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .text-success {
+        color: #28a745 !important;
+    }
+
+    .text-info {
+        color: #17a2b8 !important;
     }
 </style>
 
@@ -69,7 +98,7 @@
                     <form asp-action="Create" method="post">
                         @Html.AntiForgeryToken()
 
-                      
+                       
                         <div class="mb-4">
                             <label asp-for="CourseId" class="form-label">
                                 <i class="fas fa-book me-2 text-primary"></i>Select Course
@@ -84,6 +113,7 @@
                             </div>
                         </div>
 
+                       
                         <div class="mb-4">
                             <label asp-for="Title" class="form-label">
                                 <i class="fas fa-heading me-2 text-primary"></i>Lesson Title
@@ -96,7 +126,6 @@
                             </div>
                         </div>
 
-                      
                         <div class="mb-4">
                             <label asp-for="VideoUrl" class="form-label">
                                 <i class="fas fa-video me-2 text-danger"></i>Video URL
@@ -123,7 +152,6 @@
                             </div>
                         </div>
 
-                  
                         <div class="mb-4">
                             <label asp-for="OrderIndex" class="form-label">
                                 <i class="fas fa-sort-numeric-up me-2 text-info"></i>Lesson Order
@@ -136,13 +164,12 @@
                             </div>
                         </div>
 
-                    
+                       
                         <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
                             <a asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Back to Lessons
                             </a>
                             <div>
-                                
                                 <button type="submit" class="btn btn-primary btn-lg">
                                     <i class="fas fa-save me-2"></i>Create Lesson
                                 </button>
@@ -175,13 +202,11 @@
         const videoUrlInput = document.querySelector('input[name="VideoUrl"]');
         const courseSelect = document.querySelector('select[name="CourseId"]');
 
-
         if (videoUrlInput) {
             videoUrlInput.addEventListener('blur', function() {
                 const url = this.value.trim();
                 if (url && !isValidVideoUrl(url)) {
                     this.classList.add('is-invalid');
-  
                 } else {
                     this.classList.remove('is-invalid');
                 }
@@ -192,7 +217,6 @@
             courseSelect.addEventListener('change', function() {
                 const courseId = this.value;
                 if (courseId) {
-
                 }
             });
         }

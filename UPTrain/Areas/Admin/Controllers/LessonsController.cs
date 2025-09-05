@@ -90,6 +90,7 @@ namespace UPTrain.Areas.Admin.Controllers
             return View(lesson);
         }
         //------------------------------------------
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -109,9 +110,7 @@ namespace UPTrain.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id, Lesson lesson)
         {
             if (id != lesson.LessonId)
-                return NotFound();
-
-            if (ModelState.IsValid)
+                return NotFound();           
             {
                 try
                 {
@@ -132,7 +131,7 @@ namespace UPTrain.Areas.Admin.Controllers
                 }
             }
 
-   
+
             var courses = await _courseRepo.GetAllAsync();
             ViewBag.Courses = new SelectList(courses, "CourseId", "Title", lesson.CourseId);
             return View(lesson);
