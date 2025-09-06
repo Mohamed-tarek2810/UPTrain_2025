@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using UPTrain.IRepositories;
 using UPTrain.Models;
 using System.Threading.Tasks;
@@ -17,77 +18,83 @@ namespace UPTrain.Areas.Admin.Controllers
             _courseRepo = courseRepo;
         }
 
-    
-        public async Task<IActionResult> Index(int courseId)
+        public async Task<IActionResult> Index(int? courseId = null)
         {
-            var quizzes = await _quizRepo.GetAllAsync(
-                q => q.CourseId == courseId,
-                q => q.Course
-            );
+            var quizzes = courseId.HasValue
+                ? await _quizRepo.GetAllAsync(q => q.CourseId == courseId.Value, q => q.Course)
+                : await _quizRepo.GetAllAsync(null, q => q.Course);
 
             ViewBag.CourseId = courseId;
+
+          
+            var courses = await _courseRepo.GetAllAsync();
+            ViewBag.Courses = new SelectList(courses, "CourseId", "Title", courseId);
+
             return View(quizzes);
         }
 
-        
-        public IActionResult Create(int courseId)
+        public async Task<IActionResult> Create()
         {
-            var quiz = new Quiz { CourseId = courseId };
+            var courses = await _courseRepo.GetAllAsync();
+            ViewBag.Courses = new SelectList(courses, "CourseId", "Title");
+
+            var quiz = new Quiz();
             return View(quiz);
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Quiz quiz)
         {
-            if (ModelState.IsValid)
+        
             {
                 await _quizRepo.AddAsync(quiz);
+                var result = await _quizRepo.CommitAsync();
                 return RedirectToAction(nameof(Index), new { courseId = quiz.CourseId });
             }
-            return View(quiz);
-        }
+
 
     
+       
+        }
+
         public async Task<IActionResult> Edit(int id)
         {
-            var quiz = await _quizRepo.GetOneAsync(q=>q.QuizId == id);
+            var quiz = await _quizRepo.GetOneAsync(q => q.QuizId == id, q => q.Course);
             if (quiz == null) return NotFound();
+
+            var courses = await _courseRepo.GetAllAsync();
+            ViewBag.Courses = new SelectList(courses, "CourseId", "Title", quiz.CourseId);
 
             return View(quiz);
         }
 
-
-        [HttpPost] 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Quiz quiz)
         {
-            if (ModelState.IsValid)
+         
             {
                 await _quizRepo.Update(quiz);
+                var result = await _quizRepo.CommitAsync();
                 return RedirectToAction(nameof(Index), new { courseId = quiz.CourseId });
             }
-            return View(quiz);
+
+          
+         
         }
 
-
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var quiz = await _quizRepo.GetOneAsync(q => q.QuizId == id);
-            if (quiz == null) return NotFound();
+            var quize = await _quizRepo.GetOneAsync(c => c.QuizId == id);
 
-            return View(quiz);
-        }
-
-  
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var quiz = await _quizRepo.GetOneAsync(q => q.QuizId == id);
-            if (quiz != null)
+            if (quize is not null)
             {
-                await _quizRepo.Delete(quiz);
-                return RedirectToAction(nameof(Index), new { courseId = quiz.CourseId });
+                await _quizRepo.Delete(quize);
+                await _quizRepo.CommitAsync();
+
+                TempData["SuccessMessage"] = "Course deleted successfully!";
+                return RedirectToAction(nameof(Index));
             }
 
             return NotFound();

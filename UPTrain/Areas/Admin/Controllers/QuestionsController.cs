@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using UPTrain.IRepositories;
 using UPTrain.Models;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace UPTrain.Areas.Admin.Controllers
 {
@@ -17,84 +19,109 @@ namespace UPTrain.Areas.Admin.Controllers
             _quizRepo = quizRepo;
         }
 
-        public async Task<IActionResult> Index(int quizId)
+        public async Task<IActionResult> Index(int? quizId = null)
         {
-            var questions = await _questionRepo.GetAllAsync(
-                q => q.QuizId == quizId,
-                q => q.Quiz
-            );
+            var questions = quizId.HasValue
+                ? await _questionRepo.GetAllAsync(q => q.QuizId == quizId.Value, q => q.Quiz)
+                : await _questionRepo.GetAllAsync(null, q => q.Quiz);
 
             ViewBag.QuizId = quizId;
-            ViewBag.QuizTitle = questions.FirstOrDefault()?.Quiz?.Title ?? "";
+
+            var quizzes = await _quizRepo.GetAllAsync(null, q => q.Course);
+            ViewBag.Quizzes = new SelectList(quizzes.Select(q => new {
+                QuizId = q.QuizId,
+                DisplayText = $"{q.Title} - {q.Course?.Title}"
+            }), "QuizId", "DisplayText", quizId);
+
             return View(questions);
         }
 
         [HttpGet]
-        public IActionResult Create(int quizId)
+        public async Task<IActionResult> Create()
         {
-            var question = new Question { QuizId = quizId };
+            var quizzes = await _quizRepo.GetAllAsync(null, q => q.Course);
+            ViewBag.Quizzes = new SelectList(quizzes.Select(q => new {
+                QuizId = q.QuizId,
+                DisplayText = $"{q.Title} - {q.Course?.Title}"
+            }), "QuizId", "DisplayText");
+
+            var question = new Question();
             return View(question);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Question question)
         {
-            if (ModelState.IsValid)
+          
             {
                 await _questionRepo.AddAsync(question);
                 var result = await _questionRepo.CommitAsync();
                 if (result)
                     return RedirectToAction("Index", new { quizId = question.QuizId });
-
-                ModelState.AddModelError("", "An error occurred while saving the question.");
+                ModelState.AddModelError("", "حدث خطأ أثناء حفظ السؤال.");
             }
+
+       
+            var quizzes = await _quizRepo.GetAllAsync(null, q => q.Course);
+            ViewBag.Quizzes = new SelectList(quizzes.Select(q => new {
+                QuizId = q.QuizId,
+                DisplayText = $"{q.Title} - {q.Course?.Title}"
+            }), "QuizId", "DisplayText", question.QuizId);
+
             return View(question);
         }
 
- 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var question = await _questionRepo.GetOneAsync(q => q.QuestionId == id);
+            var question = await _questionRepo.GetOneAsync(q => q.QuestionId == id, q => q.Quiz);
             if (question == null) return NotFound();
+
+            var quizzes = await _quizRepo.GetAllAsync(null, q => q.Course);
+            ViewBag.Quizzes = new SelectList(quizzes.Select(q => new {
+                QuizId = q.QuizId,
+                DisplayText = $"{q.Title} - {q.Course?.Title}"
+            }), "QuizId", "DisplayText", question.QuizId);
+
             return View(question);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Question question)
         {
-            if (ModelState.IsValid)
+           
             {
                 await _questionRepo.Update(question);
                 var result = await _questionRepo.CommitAsync();
                 if (result)
                     return RedirectToAction("Index", new { quizId = question.QuizId });
-
-                ModelState.AddModelError("", "An error occurred while updating the question.");
+                ModelState.AddModelError("", "حدث خطأ أثناء تحديث السؤال.");
             }
+
+            var quizzes = await _quizRepo.GetAllAsync(null, q => q.Course);
+            ViewBag.Quizzes = new SelectList(quizzes.Select(q => new {
+                QuizId = q.QuizId,
+                DisplayText = $"{q.Title} - {q.Course?.Title}"
+            }), "QuizId", "DisplayText", question.QuizId);
+
             return View(question);
         }
 
-  
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var question = await _questionRepo.GetOneAsync(q => q.QuestionId == id, q => q.Quiz);
-            if (question == null) return NotFound();
-            return View(question);
-        }
+            var question = await _questionRepo.GetOneAsync(c => c.QuestionId == id);
 
-   
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var question = await _questionRepo.GetOneAsync(q => q.QuestionId == id);
-            if (question != null)
+            if (question is not null)
             {
-                int quizId = question.QuizId;
                 await _questionRepo.Delete(question);
                 await _questionRepo.CommitAsync();
-                return RedirectToAction("Index", new { quizId });
+
+                TempData["SuccessMessage"] = "Course deleted successfully!";
+                return RedirectToAction(nameof(Index));
             }
+
             return NotFound();
         }
     }

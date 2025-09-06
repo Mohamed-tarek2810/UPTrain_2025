@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UPTrain.Models;
 using UPTrain.ViewModels;
 
@@ -63,7 +65,6 @@ namespace UPTrain.Areas.Identity.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 var user = await userManager.FindByEmailAsync(loginViewModel.Email);
 
                 if (user == null)
@@ -72,18 +73,35 @@ namespace UPTrain.Areas.Identity.Controllers
                     return View(loginViewModel);
                 }
 
-
                 if (user.IsBlocked)
                 {
                     ModelState.AddModelError("", "Your account has been blocked. Please contact support.");
                     return View(loginViewModel);
                 }
 
-
                 var result = await signInManager.PasswordSignInAsync(user, loginViewModel.Password, loginViewModel.RememberMe, false);
 
                 if (result.Succeeded)
                 {
+                    
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.FullName ?? user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString()) 
+            };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
+                    var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                    
+                    await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, claimsPrincipal);
+
+                    
+                    if (user.Role == UserRole.Admin)
+                        return RedirectToAction("Index", "Home", new { area = "Admin" });
+
                     return RedirectToAction("Index", "Home", new { area = "Customer" });
                 }
                 else
@@ -94,7 +112,6 @@ namespace UPTrain.Areas.Identity.Controllers
 
             return View(loginViewModel);
         }
-
 
         public async Task<IActionResult> Logout()
         {

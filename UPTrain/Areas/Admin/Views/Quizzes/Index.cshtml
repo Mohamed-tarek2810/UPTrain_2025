@@ -4,30 +4,63 @@
     var courseId = ViewBag.CourseId;
 }
 
-<h2>Quizzes for @Model.FirstOrDefault()?.Course?.Title</h2>
-<a asp-action="Create" asp-route-courseId="@courseId" class="btn btn-success mb-3">Add New Quiz</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Manage Quizzes</h2>
+    <a asp-action="Create" class="btn btn-success">Add New Quiz</a>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Quiz Title</th>
-            <th>Course</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var quiz in Model)
-        {
+<!-- Course Filter -->
+<div class="mb-3">
+    <form method="get" asp-action="Index">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label">Filter by Course:</label>
+                <select name="courseId" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Courses</option>
+                    @foreach (var course in (SelectList)ViewBag.Courses)
+                    {
+                        <option value="@course.Value" selected="@course.Selected">@course.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (Model.Any())
+{
+    <table class="table table-striped">
+        <thead class="table-dark">
             <tr>
-                <td>@quiz.Title</td>
-                <td>@quiz.Course?.Title</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@quiz.QuizId" class="btn btn-primary btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@quiz.QuizId" class="btn btn-danger btn-sm">Delete</a>
-                </td>
+                <th>Quiz Title</th>
+                <th>Course</th>
+                <th>Number of Questions</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var quiz in Model)
+            {
+                <tr>
+                    <td>@quiz.Title</td>
+                    <td>@quiz.Course?.Title</td>
+                    <td>@quiz.Questions.Count</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@quiz.QuizId" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@quiz.QuizId" class="btn btn-danger btn-sm">Delete</a>
+                        <a asp-controller="Questions" asp-action="Index" asp-route-quizId="@quiz.QuizId" class="btn btn-info btn-sm">Manage Questions</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">
+        <h4>No Quizzes Found</h4>
+        <p>No quizzes have been created yet. Start by adding a new quiz.</p>
+    </div>
+}
 
 <a asp-controller="Courses" asp-action="Index" class="btn btn-secondary">Back to Courses</a>

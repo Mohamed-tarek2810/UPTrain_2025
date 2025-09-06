@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using UPTrain.IRepositories;
 using UPTrain.Models;
 
@@ -45,6 +46,9 @@ namespace UPTrain.Areas.Admin.Controllers
             var user = await _userRepo.GetOneAsync(u => u.Id == id);
             if (user == null) return NotFound();
 
+            ViewBag.Roles = new SelectList(Enum.GetValues(typeof(UserRole)) .Cast<UserRole>() 
+         .Select(r => new { Value = (int)r, Text = r.ToString() }), "Value", "Text", user.Role);
+
             return View(user);
         }
 
@@ -54,9 +58,17 @@ namespace UPTrain.Areas.Admin.Controllers
         {
             if (id != user.Id)
                 return NotFound();
-
             if (!ModelState.IsValid)
+            {
+            
+                ViewBag.Roles = new SelectList(
+                    Enum.GetValues(typeof(UserRole))
+                        .Cast<UserRole>()
+                        .Select(r => new { Value = (int)r, Text = r.ToString() }),
+                    "Value", "Text", user.Role
+                );
                 return View(user);
+            }
 
             var existingUser = await _userRepo.GetOneAsync(u => u.Id == id);
             if (existingUser == null)

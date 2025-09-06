@@ -21,9 +21,11 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="Role" class="form-label"></label>
-        <input asp-for="Role" class="form-control" />
+        <label asp-for="Role" class="form-label">Role</label>
+        <select asp-for="Role" class="form-select" asp-items="ViewBag.Roles"></select>
+        <span asp-validation-for="Role" class="text-danger"></span>
     </div>
+
 
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>

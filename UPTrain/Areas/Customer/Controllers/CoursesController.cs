@@ -20,7 +20,7 @@ namespace UPTrain.Areas.Customer.Controllers
             var courses = await _courseRepository.GetAllAsync();
             return View(courses);
         }
-
+        [Authorize]
         public async Task<IActionResult> CoursesDetails(int id)
         {
             var course = await _courseRepository.GetOneAsync(

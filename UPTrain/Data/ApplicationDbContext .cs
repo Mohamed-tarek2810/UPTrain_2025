@@ -50,6 +50,11 @@ namespace UPTrain.Data
                    .HasOne(ub => ub.Badge)
                    .WithMany(b => b.UserBadges)
                    .HasForeignKey(ub => ub.BadgeId);
+
+
+            builder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<int>();
         }
     }
 }

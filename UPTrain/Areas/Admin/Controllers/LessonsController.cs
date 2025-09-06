@@ -4,6 +4,7 @@ using UPTrain.IRepositories;
 using UPTrain.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UPTrain.Areas.Admin.Controllers
 {
@@ -19,6 +20,7 @@ namespace UPTrain.Areas.Admin.Controllers
             _courseRepo = courseRepo;
         }
 
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(int? courseId)
         {
             var lessons = courseId.HasValue

@@ -3,46 +3,166 @@
     ViewData["Title"] = "Edit Question";
 }
 
-<h2>Edit Question</h2>
+<style>
+    .dark-form {
+        background-color: #000000;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        margin: 20px 0;
+    }
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="QuestionId" />
-    <input type="hidden" asp-for="QuizId" />
+        .dark-form .form-control,
+        .dark-form .form-select,
+        .dark-form textarea {
+            background-color: #000000;
+            border: 2px solid #333333;
+            color: #ffffff;
+            font-size: 16px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
 
-    <div class="mb-3">
-        <label asp-for="QuestionText" class="form-label"></label>
-        <textarea asp-for="QuestionText" class="form-control"></textarea>
-        <span asp-validation-for="QuestionText" class="text-danger"></span>
+            .dark-form .form-control:focus,
+            .dark-form .form-select:focus,
+            .dark-form textarea:focus {
+                background-color: #000000;
+                border-color: #007bff;
+                color: #ffffff;
+                box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+                outline: none;
+            }
+
+        .dark-form .form-label {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .dark-form h2 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .dark-form .form-control::placeholder,
+        .dark-form textarea::placeholder {
+            color: #cccccc;
+            opacity: 0.8;
+        }
+
+        .dark-form .text-danger {
+            color: #ff6b6b !important;
+            font-weight: 500;
+        }
+
+    .option-section {
+        background-color: #111111;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        border-left: 4px solid #ffc107;
+    }
+
+        .option-section h5 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+    .correct-answer-section {
+        background-color: #0d4f0d;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        border-left: 4px solid #28a745;
+    }
+
+        .correct-answer-section h5 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="dark-form">
+                <h2>Edit Question</h2>
+
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="QuestionId" />
+
+               
+                    <div class="mb-4">
+                        <label asp-for="QuizId" class="form-label">Select Quiz</label>
+                        <select asp-for="QuizId" class="form-select" asp-items="ViewBag.Quizzes">
+                            <option value="">-- Choose a Quiz --</option>
+                        </select>
+                        <span asp-validation-for="QuizId" class="text-danger"></span>
+                    </div>
+
+               
+                    <div class="mb-4">
+                        <label asp-for="QuestionText" class="form-label">Question Text</label>
+                        <textarea asp-for="QuestionText" class="form-control" rows="4" placeholder="Enter the question here..."></textarea>
+                        <span asp-validation-for="QuestionText" class="text-danger"></span>
+                    </div>
+
+                   
+                    <div class="option-section">
+                        <h5>Answer Options</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="OptionA" class="form-label">Option A</label>
+                                <input asp-for="OptionA" class="form-control" type="text" placeholder="Enter first option..." />
+                                <span asp-validation-for="OptionA" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="OptionB" class="form-label">Option B</label>
+                                <input asp-for="OptionB" class="form-control" type="text" placeholder="Enter second option..." />
+                                <span asp-validation-for="OptionB" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="OptionC" class="form-label">Option C</label>
+                                <input asp-for="OptionC" class="form-control" type="text" placeholder="Enter third option..." />
+                                <span asp-validation-for="OptionC" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="OptionD" class="form-label">Option D</label>
+                                <input asp-for="OptionD" class="form-control" type="text" placeholder="Enter fourth option..." />
+                                <span asp-validation-for="OptionD" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="correct-answer-section">
+                        <h5>Correct Answer</h5>
+                        <select asp-for="CorrectAnswer" class="form-select" asp-items="Html.GetEnumSelectList<UPTrain.Models.AnswerOption>()">
+                            <option value="">-- Select the Correct Answer --</option>
+                        </select>
+                        <span asp-validation-for="CorrectAnswer" class="text-danger"></span>
+                    </div>
+
+                   
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg me-md-2">Update Question</button>
+                        <a asp-action="Index" asp-route-quizId="@Model.QuizId" class="btn btn-secondary btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label asp-for="OptionA" class="form-label"></label>
-        <input asp-for="OptionA" class="form-control" type="text" />
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="OptionB" class="form-label"></label>
-        <input asp-for="OptionB" class="form-control" type="text" />
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="OptionC" class="form-label"></label>
-        <input asp-for="OptionC" class="form-control" type="text" />
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="OptionD" class="form-label"></label>
-        <input asp-for="OptionD" class="form-control" type="text" />
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="CorrectAnswer" class="form-label"></label>
-        <select asp-for="CorrectAnswer" class="form-select" asp-items="Html.GetEnumSelectList<UPTrain.Models.AnswerOption>()">
-            <option value="">-- Select Correct Answer --</option>
-        </select>
-        <span asp-validation-for="CorrectAnswer" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Update</button>
-    <a asp-action="Index" asp-route-quizId="@Model.QuizId" class="btn btn-secondary">Cancel</a>
-</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -3,23 +3,89 @@
     ViewData["Title"] = "Edit Quiz";
 }
 
-<h2>Edit Quiz</h2>
+<style>
+    .dark-form {
+        background-color: #000000;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="QuizId" />
-    <input type="hidden" asp-for="CourseId" />
+        .dark-form .form-control,
+        .dark-form .form-select {
+            background-color: #000000;
+            border: 2px solid #333333;
+            color: #ffffff;
+        }
 
-    <div class="mb-3">
-        <label class="form-label">Course</label>
-        <input class="form-control" value="@Model.Course?.Title" readonly />
+            .dark-form .form-control:focus,
+            .dark-form .form-select:focus {
+                background-color: #000000;
+                border-color: #007bff;
+                color: #ffffff;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+            .dark-form .form-control[readonly] {
+                background-color: #1a1a1a;
+                color: #cccccc;
+            }
+
+        .dark-form .form-label {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .dark-form h2 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dark-form .form-control::placeholder {
+            color: #cccccc;
+        }
+
+        .dark-form .text-danger {
+            color: #ff6b6b !important;
+        }
+</style>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="dark-form">
+                <h2>Edit Quiz</h2>
+
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="QuizId" />
+
+                    <div class="mb-4">
+                        <label asp-for="CourseId" class="form-label">Select Course</label>
+                        <select asp-for="CourseId" class="form-select" asp-items="ViewBag.Courses">
+                            <option value="">-- Choose a course --</option>
+                        </select>
+                        <span asp-validation-for="CourseId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Title" class="form-label">Quiz Title</label>
+                        <input asp-for="Title" class="form-control" type="text" placeholder="Enter quiz title..." />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button type="submit" class="btn btn-primary btn-lg me-md-2">Update Quiz</button>
+                        <a asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-secondary btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label asp-for="Title" class="form-label"></label>
-        <input asp-for="Title" class="form-control" type="text" />
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
 
-    <button type="submit" class="btn btn-primary">Update</button>
-    <a asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-secondary">Cancel</a>
-</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

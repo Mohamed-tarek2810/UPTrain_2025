@@ -12,8 +12,8 @@ namespace UPTrain.Models
         [Display(Name = "FullName")]
         public string FullName { get; set; } = string.Empty;
         public bool IsBlocked { get; set; } = false;
-        public string Role { get; set; } = "Cutomer";
-       
+        public UserRole Role { get; set; } = UserRole.Customer;
+
         public virtual ICollection<Courses> CreatedCourses { get; set; } = new List<Courses>();
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
         public ICollection<Answer> Answers { get; set; } = new List<Answer>();
@@ -22,6 +22,12 @@ namespace UPTrain.Models
         public ICollection<UserBadge> UserBadges { get; set; } = new List<UserBadge>();
 
     }
+    public enum UserRole
+    {
+        Customer,
+        Admin
+    }
+
 
 
 }
