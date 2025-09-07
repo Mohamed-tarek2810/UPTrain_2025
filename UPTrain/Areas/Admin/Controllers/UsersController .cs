@@ -15,9 +15,24 @@ namespace UPTrain.Areas.Admin.Controllers
             _userRepo = userRepo;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
             var users = await _userRepo.GetAllAsync();
+
+            
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                users = users.Where(u =>
+                    u.FullName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    u.UserName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    u.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    u.Role.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
+
+         
+            ViewBag.SearchTerm = searchTerm;
+
             return View(users);
         }
 

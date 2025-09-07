@@ -20,7 +20,7 @@ namespace UPTrain.Areas.Admin.Controllers
             _courseRepo = courseRepo;
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(int? courseId)
         {
             var lessons = courseId.HasValue
