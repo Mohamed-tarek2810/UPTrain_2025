@@ -2,10 +2,12 @@
 using UPTrain.IRepositories;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UPTrain.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    //[Authorize(Roles = "Admin")]
     public class HomeController : Controller
     {
         private readonly ICourseRepository _courseRepo;

@@ -25,7 +25,7 @@
             overflow-x: hidden;
         }
 
-        /* Header Styles */
+
         .navbar {
             background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%) !important;
             border-bottom: 2px solid var(--accent-color);
@@ -60,7 +60,7 @@
                 color: white;
             }
 
-        /* Sidebar Styles */
+
         .sidebar {
             background: linear-gradient(180deg, var(--primary-black) 0%, var(--secondary-black) 100%);
             width: 280px;
@@ -93,7 +93,6 @@
             padding-bottom: 0.5rem;
         }
 
-        /* Navigation Buttons */
         .nav-btn {
             display: flex;
             align-items: center;
@@ -141,7 +140,6 @@
                 text-align: center;
             }
 
-        /* Dropdown Styles */
         .dropdown-btn {
             position: relative;
         }
@@ -191,7 +189,6 @@
                 transform: translateX(3px);
             }
 
-        /* Content Area */
         .main-content {
             flex: 1;
             padding: 2rem;
@@ -199,7 +196,24 @@
             min-height: 100vh;
         }
 
-        /* Special Logout Button in Sidebar */
+        .home-btn {
+            background: linear-gradient(45deg, #16a34a, #22c55e);
+            border: none;
+            border-radius: 25px;
+            padding: 8px 20px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); 
+        }
+
+            .home-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 25px rgba(34, 197, 94, 0.5); 
+                color: white;
+            }
+
+     
         .logout-nav-btn {
             background: linear-gradient(135deg, #dc2626, #991b1b);
             border-color: #dc2626;
@@ -241,7 +255,7 @@
             animation: slideIn 0.5s ease-out;
         }
 
-        /* Glow effects */
+        
         .nav-btn:hover,
         .logout-btn:hover {
             box-shadow: 0 0 20px rgba(79, 70, 229, 0.5), 0 0 40px rgba(79, 70, 229, 0.3), 0 0 60px rgba(79, 70, 229, 0.1);
@@ -253,22 +267,27 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
+
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index">
-                <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+                <i class="fas fa-shield-alt me-3"></i>Admin Dashboard
             </a>
             <div class="d-flex">
-                <a class="btn logout-btn" asp-area="Identity" asp-page="/Account/Logout">
-                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                <a class="btn logout-btn me-3" asp-area="Identity" asp-controller="Account" asp-action="Logout">
+                    <i class="fas fa-sign-out-alt me-3 gap-2"></i>Logout
                 </a>
+
+                @* <a class="btn logout-btn home-btn" asp-area="Customer" asp-controller="Home" asp-action="Index"> *@
+                @*     <i class="fas fa-home me-2 gap-2"></i>Home *@
+                @* </a> *@
+
             </div>
         </div>
     </nav>
-
+ 
     <div class="d-flex">
-        <!-- Sidebar -->
+  
         <div class="sidebar p-4">
             <h5 class="sidebar-title">
                 <i class="fas fa-cogs me-2"></i>Management
@@ -384,10 +403,10 @@
                     Questions
                 </a>
 
-                <a class="nav-btn" asp-area="Admin" asp-controller="Enrollments" asp-action="Index">
-                    <i class="fas fa-clipboard-list"></i>
-                    Enrollments
-                </a>
+                @* <a class="nav-btn" asp-area="Admin" asp-controller="Enrollments" asp-action="Index"> *@
+                @*     <i class="fas fa-clipboard-list"></i> *@
+                @*     Enrollments *@
+                @* </a> *@
 
                 <a class="nav-btn" asp-area="Admin" asp-controller="Categories" asp-action="Index">
                     <i class="fas fa-tags"></i>

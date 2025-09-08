@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UPTrain.Models;
 
 namespace UPTrain.ViewModels
 {
@@ -23,5 +24,9 @@ namespace UPTrain.ViewModels
         [Display(Name = "Confirm Password")]
         [Compare("Password", ErrorMessage = "Password does not match.")]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Role is required")]
+        [Display(Name = "User Role")]
+        public UserRole Role { get; set; }
     }
 }

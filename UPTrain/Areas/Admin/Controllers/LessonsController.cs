@@ -20,7 +20,7 @@ namespace UPTrain.Areas.Admin.Controllers
             _courseRepo = courseRepo;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(int? courseId)
         {
             var lessons = courseId.HasValue
@@ -43,6 +43,7 @@ namespace UPTrain.Areas.Admin.Controllers
         //-----------------------------------------------------------
 
         [HttpGet]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(int? courseId)
         {
     
@@ -63,6 +64,7 @@ namespace UPTrain.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(Lesson lesson)
         {
         
@@ -94,6 +96,7 @@ namespace UPTrain.Areas.Admin.Controllers
         //------------------------------------------
 
         [HttpGet]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var lesson = await _lessonRepo.GetOneAsync(l => l.LessonId == id, l => l.Course);
@@ -143,7 +146,7 @@ namespace UPTrain.Areas.Admin.Controllers
 
         //--------------------------------------------------
 
-
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var lesson = await _lessonRepo.GetOneAsync(c => c.LessonId == id);

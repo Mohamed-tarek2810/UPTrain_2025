@@ -34,7 +34,6 @@
             <tr>
                 <th>Quiz Title</th>
                 <th>Course</th>
-                <th>Number of Questions</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -43,8 +42,7 @@
             {
                 <tr>
                     <td>@quiz.Title</td>
-                    <td>@quiz.Course?.Title</td>
-                    <td>@quiz.Questions.Count</td>
+                    <td>@quiz.Course?.Title</td>                
                     <td>
                         <a asp-action="Edit" asp-route-id="@quiz.QuizId" class="btn btn-primary btn-sm">Edit</a>
                         <a asp-action="Delete" asp-route-id="@quiz.QuizId" class="btn btn-danger btn-sm">Delete</a>

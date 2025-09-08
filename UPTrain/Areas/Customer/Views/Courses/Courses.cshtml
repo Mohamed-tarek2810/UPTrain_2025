@@ -29,6 +29,8 @@
                             @course.Category
                         </h6>
 
+                        <h5 class="card-title fw-bold text-dark">@course.Price</h5>
+
                         <p class="card-text flex-grow-1 text-secondary" style="font-size: 0.95rem;">
                             @if (!string.IsNullOrEmpty(course.Description) && course.Description.Length > 120)
                             {
@@ -50,7 +52,7 @@
                     
                     <div class="card-footer bg-light text-muted small text-center border-0 rounded-bottom-4">
                         <i class="bi bi-person-circle"></i>
-                        Created By: <span class="fw-semibold">@course.CreatedBy?.UserName</span>
+                        Created By: <span class="fw-semibold">@course.CreatedBy?.FullName</span>
                     </div>
                 </div>
             </div>

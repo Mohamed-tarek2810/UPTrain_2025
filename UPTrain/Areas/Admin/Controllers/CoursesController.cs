@@ -80,7 +80,7 @@ namespace UPTrain.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var course = await _courseRepo.GetByIdAsync(id);
+            var course = await _courseRepo.GetOneAsync(e=>e.CourseId == id);
             if (course == null)
             {
                 return NotFound();
@@ -115,13 +115,13 @@ namespace UPTrain.Areas.Admin.Controllers
                 return View(course);
             }
 
-            var existingCourse = await _courseRepo.GetByIdAsync(id);
+            var existingCourse = await _courseRepo.GetOneAsync(e => e.CourseId == id);
             if (existingCourse == null)
             {
                 return NotFound();
             }
 
-            // Update properties
+           
             existingCourse.Title = course.Title;
             existingCourse.Description = course.Description;
             existingCourse.CategoryId = course.CategoryId;
@@ -129,7 +129,7 @@ namespace UPTrain.Areas.Admin.Controllers
 
             if (ImageUrl is not null && ImageUrl.Length > 0)
             {
-                // Delete old image if exists
+             
                 if (!string.IsNullOrEmpty(existingCourse.ImageUrl))
                 {
                     var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", existingCourse.ImageUrl);
@@ -139,7 +139,7 @@ namespace UPTrain.Areas.Admin.Controllers
                     }
                 }
 
-                // Save new image
+              
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageUrl.FileName);
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
 

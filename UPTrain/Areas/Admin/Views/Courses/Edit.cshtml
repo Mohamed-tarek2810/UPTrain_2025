@@ -99,7 +99,7 @@
                             <label for="CourseImage" class="form-label">Course Image</label>
                             <input type="file" class="form-control" id="CourseImage" name="ImageUrl" accept="image/*" onchange="previewImage(event)">
 
-                            @* Show existing image if available *@
+                            
                             @if (!string.IsNullOrEmpty(Model.ImageUrl))
                             {
                                 <div class="mt-2">
