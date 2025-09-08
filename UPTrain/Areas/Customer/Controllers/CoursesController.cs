@@ -17,7 +17,7 @@ namespace UPTrain.Areas.Customer.Controllers
         [Authorize]
         public async Task<IActionResult> Courses()
         {
-            var courses = await _courseRepository.GetAllAsync();
+            var courses = await _courseRepository.GetAllAsync(includes: [e=>e.CreatedBy]);
             return View(courses);
         }
         [Authorize]

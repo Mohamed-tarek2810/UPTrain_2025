@@ -65,7 +65,7 @@ namespace UPTrain.Areas.Admin.Controllers
                     await ImageUrl.CopyToAsync(stream);
                 }
 
-                course.ImageUrl = "/images/" + fileName;
+                course.ImageUrl = fileName;
             }
 
             course.CreatedDate = DateTime.Now;
@@ -77,6 +77,88 @@ namespace UPTrain.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var course = await _courseRepo.GetByIdAsync(id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            var users = await _userManager.Users.ToListAsync();
+            var categories = await _categoryRepo.GetAllAsync();
+
+            ViewBag.Users = new SelectList(users, "Id", "UserName", course.CreatedById);
+            ViewBag.Categories = new SelectList(categories, "CategoryId", "Name", course.CategoryId);
+
+            return View(course);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Courses course, IFormFile? ImageUrl)
+        {
+            if (id != course.CourseId)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var users = await _userManager.Users.ToListAsync();
+                var categories = await _categoryRepo.GetAllAsync();
+
+                ViewBag.Users = new SelectList(users, "Id", "UserName", course.CreatedById);
+                ViewBag.Categories = new SelectList(categories, "CategoryId", "Name", course.CategoryId);
+
+                return View(course);
+            }
+
+            var existingCourse = await _courseRepo.GetByIdAsync(id);
+            if (existingCourse == null)
+            {
+                return NotFound();
+            }
+
+            // Update properties
+            existingCourse.Title = course.Title;
+            existingCourse.Description = course.Description;
+            existingCourse.CategoryId = course.CategoryId;
+            existingCourse.CreatedById = course.CreatedById;
+
+            if (ImageUrl is not null && ImageUrl.Length > 0)
+            {
+                // Delete old image if exists
+                if (!string.IsNullOrEmpty(existingCourse.ImageUrl))
+                {
+                    var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", existingCourse.ImageUrl);
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                // Save new image
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageUrl.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await ImageUrl.CopyToAsync(stream);
+                }
+
+                existingCourse.ImageUrl = fileName;
+            }
+
+            existingCourse.UpdatedDate = DateTime.Now;
+
+            await _courseRepo.Update(existingCourse);
+            await _courseRepo.CommitAsync();
+
+            TempData["SuccessMessage"] = "Course updated successfully!";
+            return RedirectToAction(nameof(Index));
+        }
 
         public async Task<IActionResult> Delete([FromRoute] int id)
         {

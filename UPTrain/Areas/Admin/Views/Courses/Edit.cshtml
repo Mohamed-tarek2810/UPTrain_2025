@@ -1,117 +1,148 @@
-﻿@model UPTrain.Models.Courses
+﻿@model Courses
 @{
     ViewData["Title"] = "Edit Course";
 }
 
 <style>
     body {
-        background-color: #f8f9fa;
+        background-color: #121212;
+        color: #e0e0e0;
     }
 
-    .edit-course-card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    .card {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border: 1px solid #333;
     }
 
-        .edit-course-card .card-header {
-            background-color: #0d6efd;
-            color: white;
-            font-weight: 600;
-            font-size: 1.4rem;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-        }
-
-    .form-label {
-        font-weight: 500;
+    .card-header {
+        background-color: #2a2a2a !important;
+        border-bottom: 1px solid #444;
     }
 
     .form-control, .form-select {
-        border-radius: 8px;
-        padding: 0.6rem 1rem;
-        font-size: 1rem;
+        background-color: #333;
+        color: #e0e0e0;
+        border: 1px solid #555;
     }
 
-    .btn-primary {
-        border-radius: 8px;
-        padding: 0.5rem 1.2rem;
-        font-size: 1rem;
-    }
-
-    .btn-secondary {
-        border-radius: 8px;
-        padding: 0.5rem 1.2rem;
-        font-size: 1rem;
-    }
-
-    .form-text {
-        font-size: 0.85rem;
-        color: #6c757d;
-    }
-
-
-    {
-        max-width: 700px;
-        margin: 2rem auto;
-    }
-
-    }
-</style>
-
-<div class="edit-course-card card mt-5">
-    <div class="card-header">
-        <i class="fas fa-edit"></i> Edit Course
-    </div>
-    <div class="card-body p-4">
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["ErrorMessage"]
-            </div>
+        .form-control::placeholder {
+            color: #888;
         }
 
-        <form asp-action="Edit" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="CourseId" />
+    .btn-primary {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
 
-            <div class="mb-3">
-                <label asp-for="Title" class="form-label"></label>
-                <input asp-for="Title" class="form-control" placeholder="Enter course title" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
+    .btn-outline-secondary {
+        color: #888;
+        border-color: #888;
+    }
 
-            <div class="mb-3">
-                <label asp-for="Category" class="form-label"></label>
-                <input asp-for="Category" class="form-control" placeholder="Enter category" />
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
+        .btn-outline-secondary:hover {
+            background-color: #444;
+            color: #e0e0e0;
+            border-color: #e0e0e0;
+        }
+</style>
 
-            <div class="mb-3">
-                <label asp-for="ImageUrl" class="form-label"></label>
-                <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                <div class="form-text">Enter a valid image URL for course thumbnail</div>
-            </div>
+<div class="mt-5 px-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header">
+                    <h2 class="mb-0"><i class="fas fa-edit me-2"></i> Edit Course</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
 
-            <div class="mb-3">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="5" placeholder="Enter course description"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
+                        @* Hidden field for primary key *@
+                        <input type="hidden" asp-for="CourseId" />
 
-            <div class="d-flex justify-content-end gap-2 mt-4">
-                <a asp-action="Index" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancel
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Update Course
-                </button>
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold"></label>
+                            <input asp-for="Title" class="form-control form-control-lg" placeholder="Enter course title" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="5" placeholder="Enter course description"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CategoryId" class="form-label fw-bold">Category</label>
+                            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+                                <option value="">-- Select Category --</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Price" class="form-label fw-bold"></label>
+                            <input asp-for="Price" class="form-control" type="number" placeholder="Enter price" />
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CreatedById" class="form-label fw-bold"></label>
+                            <select asp-for="CreatedById" class="form-select" asp-items="ViewBag.Users">
+                                <option value="">-- Select Creator --</option>
+                            </select>
+                            <span asp-validation-for="CreatedById" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="CourseImage" class="form-label">Course Image</label>
+                            <input type="file" class="form-control" id="CourseImage" name="ImageUrl" accept="image/*" onchange="previewImage(event)">
+
+                            @* Show existing image if available *@
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <div class="mt-2">
+                                    <p class="mb-1 text-muted">Current Image:</p>
+                                    <img src="~/images/@Model.ImageUrl" alt="Course Image" class="img-thumbnail mb-2" style="max-height: 200px;" />
+                                </div>
+                            }
+
+                            <img id="imagePreview" src="#" alt="Image Preview" class="img-thumbnail mt-2" style="display: none; max-height: 200px;" />
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('imagePreview');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+</script>
 
 @section Scripts {
     @{
