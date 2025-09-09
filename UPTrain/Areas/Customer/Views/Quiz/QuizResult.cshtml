@@ -1,0 +1,56 @@
+﻿@model UPTrain.Models.Quiz
+@{
+    ViewData["Title"] = "Quiz Result";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-success text-white text-center">
+            <h3>@Model.Title - Result</h3>
+        </div>
+        <div class="card-body">
+            <h4 class="text-center text-primary">Your Score</h4>
+            <p class="text-center fs-5">
+                Correct Answers: <strong>@ViewBag.CorrectAnswers</strong> /
+                <strong>@ViewBag.TotalQuestions</strong>
+            </p>
+            <p class="text-center fs-4 fw-bold text-dark">
+                Percentage: <span class="text-success">@ViewBag.Percentage %</span>
+            </p>
+
+            <hr />
+
+            <h5>Review Questions:</h5>
+            <ol class="list-group list-group-numbered">
+                @foreach (var question in ViewBag.Questions)
+                {
+                    var userAnswer = ViewBag.UserAnswers.ContainsKey(question.QuestionId)
+                    ? ViewBag.UserAnswers[question.QuestionId]
+                    : "No Answer";
+
+                    bool isCorrect = false;
+
+                    if (Enum.TryParse<AnswerOption>(userAnswer, out AnswerOption selected))
+                    {
+                        isCorrect = selected == question.CorrectAnswer;
+                    }
+
+                    <li class="list-group-item">
+                        <p><strong>@question.Text</strong></p>
+                        <p>
+                            Your Answer:
+                            <span class="@(isCorrect ? "text-success" : "text-danger")">
+                                @userAnswer
+                            </span>
+                        </p>
+                        <p>
+                            Correct Answer:
+                            <span class="text-success">@question.CorrectAnswer</span>
+                        </p>
+                    </li>
+                }
+
+            </ol>
+        </div>
+    </div>
+</div>

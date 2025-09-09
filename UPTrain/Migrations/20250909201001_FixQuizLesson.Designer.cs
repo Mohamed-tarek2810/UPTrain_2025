@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UPTrain.Data;
 
@@ -11,9 +12,11 @@ using UPTrain.Data;
 namespace UPTrain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250909201001_FixQuizLesson")]
+    partial class FixQuizLesson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -465,6 +468,9 @@ namespace UPTrain.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -472,6 +478,9 @@ namespace UPTrain.Migrations
                     b.HasKey("QuizId");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("LessonId")
+                        .IsUnique();
 
                     b.ToTable("Quizzes");
                 });
@@ -773,7 +782,15 @@ namespace UPTrain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("UPTrain.Models.Lesson", "Lesson")
+                        .WithOne("Quiz")
+                        .HasForeignKey("UPTrain.Models.Quiz", "LessonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Course");
+
+                    b.Navigation("Lesson");
                 });
 
             modelBuilder.Entity("UPTrain.Models.UserBadge", b =>
@@ -836,6 +853,8 @@ namespace UPTrain.Migrations
 
             modelBuilder.Entity("UPTrain.Models.Lesson", b =>
                 {
+                    b.Navigation("Quiz");
+
                     b.Navigation("UserLessons");
                 });
 

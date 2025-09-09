@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UPTrain.IRepositories;
 using UPTrain.Models;
-using System.Threading.Tasks;
 
 namespace UPTrain.Controllers
 {
@@ -9,28 +8,63 @@ namespace UPTrain.Controllers
     public class QuizController : Controller
     {
         private readonly IQuizRepository _quizRepository;
+        private readonly IQuestionRepository _questionRepository;
+        private readonly ILessonRepository _lessonRepository;
 
-        public QuizController(IQuizRepository quizRepository)
+        public QuizController(
+            IQuizRepository quizRepository,
+            IQuestionRepository questionRepository,
+            ILessonRepository lessonRepository)
         {
             _quizRepository = quizRepository;
+            _questionRepository = questionRepository;
+            _lessonRepository = lessonRepository;
         }
 
-       
-        public async Task<IActionResult> Quizs()
-        {
-            var quizzes = await _quizRepository.GetAllAsync();
-            return View(quizzes);
-        }
+  
+  
 
-       
-        public async Task<IActionResult> Details(int id)
+ 
+        [HttpPost]
+        public async Task<IActionResult> SubmitQuiz(int lessonId, Dictionary<int, string> answers)
         {
-            var quiz = await _quizRepository.GetOneAsync(q => q.QuizId == id);
-            if (quiz == null)
+       
+            var lesson = await _lessonRepository.GetOneAsync(l => l.LessonId == lessonId);
+            if (lesson == null) return NotFound("Lesson not found");
+
+         
+            var quiz = await _quizRepository.GetOneAsync(q => q.CourseId == lesson.CourseId);
+            if (quiz == null) return NotFound("Quiz not found for this course");
+
+      
+            var questions = quiz.Questions.ToList();
+
+            int correctAnswers = 0;
+            foreach (var question in questions)
             {
-                return NotFound();
+                if (answers.ContainsKey(question.QuestionId))
+                {
+                    var userAnswer = answers[question.QuestionId];
+                    if (Enum.TryParse<AnswerOption>(userAnswer, out var selectedOption))
+                    {
+                        if (selectedOption == question.CorrectAnswer)
+                            correctAnswers++;
+                    }
+                }
             }
-            return View(quiz);
+
+            double percentage = questions.Any()
+                ? (double)correctAnswers / questions.Count() * 100
+                : 0;
+
+       
+            ViewBag.CorrectAnswers = correctAnswers;
+            ViewBag.TotalQuestions = questions.Count();
+            ViewBag.Percentage = percentage;
+            ViewBag.Questions = questions;
+            ViewBag.UserAnswers = answers;
+
+            return View("QuizResult", quiz);
         }
     }
 }

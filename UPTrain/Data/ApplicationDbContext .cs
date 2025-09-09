@@ -20,7 +20,8 @@ namespace UPTrain.Data
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Question> Questions { get; set; }
-        public DbSet<UserBadge> UserBadges { get; set; }  
+        public DbSet<UserBadge> UserBadges { get; set; }
+        public DbSet<UserLesson> UserLessons { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,7 +29,9 @@ namespace UPTrain.Data
 
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=LAPTOP-F7MI2PIT\\MSSQLSERVERMO;Initial Catalog=UPTrainDB_DB;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;");
+                optionsBuilder.UseSqlServer(
+                    "Data Source=LAPTOP-F7MI2PIT\\MSSQLSERVERMO;Initial Catalog=UPTrainDB_DB;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;"
+                );
             }
         }
 
@@ -36,11 +39,10 @@ namespace UPTrain.Data
         {
             base.OnModelCreating(builder);
 
-           
+            // UserBadge (Many-to-Many between User & Badge)
             builder.Entity<UserBadge>()
                    .HasKey(ub => new { ub.UserId, ub.BadgeId });
 
-           
             builder.Entity<UserBadge>()
                    .HasOne(ub => ub.User)
                    .WithMany(u => u.UserBadges)
@@ -51,10 +53,20 @@ namespace UPTrain.Data
                    .WithMany(b => b.UserBadges)
                    .HasForeignKey(ub => ub.BadgeId);
 
-
+            // Convert User.Role enum to int in DB
             builder.Entity<User>()
-                .Property(u => u.Role)
-                .HasConversion<int>();
+                   .Property(u => u.Role)
+                   .HasConversion<int>();
+
+            // UserLesson (Many-to-Many between User & Lesson)
+            builder.Entity<UserLesson>()
+                   .HasOne(ul => ul.Lesson)
+                   .WithMany()
+                   .HasForeignKey(ul => ul.LessonId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            // Lesson ↔ Quiz (One-to-One) without cascade delete
+  
         }
     }
 }

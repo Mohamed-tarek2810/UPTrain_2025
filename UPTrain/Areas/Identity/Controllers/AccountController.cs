@@ -112,7 +112,77 @@ namespace UPTrain.Areas.Identity.Controllers
 
             return View(loginViewModel);
         }
+        public IActionResult VerifyEmail()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> VerifyEmail(VerifyEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByNameAsync(model.Email);
+
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Something is wrong!");
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("ChangePassword", "Account", new { username = user.UserName });
+                }
+            }
+            return View(model);
+        }
+
+        public IActionResult ChangePassword(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("VerifyEmail", "Account");
+            }
+            return View(new ChangePasswordViewModel { Email = username });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByNameAsync(model.Email);
+                if (user != null)
+                {
+                    var result = await userManager.RemovePasswordAsync(user);
+                    if (result.Succeeded)
+                    {
+                        result = await userManager.AddPasswordAsync(user, model.NewPassword);
+                        return RedirectToAction("Login", "Account");
+                    }
+                    else
+                    {
+
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Email not found!");
+                    return View(model);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Something went wrong. try again.");
+                return View(model);
+            }
+        }
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();

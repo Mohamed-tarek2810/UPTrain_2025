@@ -1,1 +1,277 @@
-﻿
+﻿@model IEnumerable<UPTrain.Models.Lesson>
+
+@{
+    ViewData["Title"] = "Lessons of " + ViewBag.Title;
+    var courseId = ViewBag.CourseId;
+    var Title = ViewBag.Title;
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-gradient-primary rounded-3 p-4 text-white">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="mb-2">
+                            <i class="fas fa-book-open me-2"></i>
+                            @Title
+                        </h2>
+                        <p class="mb-0 opacity-8">All course lessons are available here - start your learning journey</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="badge bg-white text-primary fs-6 px-3 py-2">
+                            <i class="fas fa-graduation-cap me-1"></i>
+                            @Model.Count() lessons
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var lesson in Model)
+            {
+                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                    <div class="card shadow-lg border-0 h-100 lesson-card">
+                        <div class="card-header bg-gradient-info text-white p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="lesson-number-badge me-3">
+                                    <span class="badge bg-white text-info rounded-circle p-2 fs-6">
+                                        @lesson.OrderIndex
+                                    </span>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">@lesson.Title</h5>
+                                    <small class="opacity-8">
+                                        <i class="fas fa-sort-numeric-up me-1"></i>
+                                        Order: @lesson.OrderIndex
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4">
+                            <div class="lesson-description mb-3">
+                                @if (!string.IsNullOrEmpty(lesson.Content))
+                                {
+                                    <p class="text-muted mb-3">@lesson.Content</p>
+                                }
+                                else
+                                {
+                                    <p class="text-muted mb-3">Lesson content will be available soon...</p>
+                                }
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="bg-light rounded p-2 text-center">
+                                        @if (!string.IsNullOrEmpty(lesson.VideoUrl))
+                                        {
+                                            <i class="fas fa-play-circle text-success fs-5"></i>
+                                            <div class="small text-success mt-1">Video Available</div>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-video-slash text-muted fs-5"></i>
+                                            <div class="small text-muted mt-1">No Video</div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-light rounded p-2 text-center">
+                                        <i class="fas fa-question-circle text-warning fs-5"></i>
+                                        <div class="small text-muted mt-1">Quiz</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("Details", new { id = lesson.LessonId })"
+                                   class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye me-2"></i>
+                                    View Lesson
+                                </a>
+
+                                <a href="@Url.Action("LessonQuiz", new { lessonId = lesson.LessonId })"
+                                   class="btn btn-outline-warning btn-sm quiz-btn">
+                                    <i class="fas fa-brain me-2"></i>
+                                    Start Quiz
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3">
+                            <i class="fas fa-chart-line me-2 text-success"></i>
+                            Your Progress
+                        </h5>
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar bg-gradient-success progress-bar-striped progress-bar-animated"
+                                 role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">0 of @Model.Count() lessons completed</small>
+                            <small class="text-success">0%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-book-open display-1 text-muted mb-4"></i>
+                        <h3 class="text-muted">No lessons available</h3>
+                        <p class="text-muted">Lessons for this course will be added soon</p>
+                        <a href="@Url.Action("Index", "Course")" class="btn btn-primary mt-3">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Back to Courses
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="quizModal" tabindex="-1" aria-labelledby="quizModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title" id="quizModalLabel">
+                    <i class="fas fa-brain me-2"></i>
+                    Start Quiz
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="fas fa-question-circle display-4 text-warning mb-3"></i>
+                <h5>Are you ready to start the quiz?</h5>
+                <p class="text-muted">Make sure you reviewed the lesson well before starting</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a href="#" id="confirmQuizBtn" class="btn btn-warning">
+                    <i class="fas fa-play me-2"></i>
+                    Start Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .lesson-card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+        .lesson-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(45deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(45deg, #56ab2f 0%, #a8e6cf 100%);
+    }
+
+    .lesson-number-badge {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .quiz-btn:hover {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #000;
+        transform: scale(1.02);
+    }
+
+    .btn {
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+    .empty-state i {
+        opacity: 0.5;
+    }
+
+    .card {
+        border-radius: 15px;
+    }
+
+    .progress {
+        border-radius: 10px;
+    }
+
+    .bg-gradient-primary .row {
+        text-align: center;
+    }
+
+    .bg-gradient-primary .col-md-4 {
+        margin-top: 1rem;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const quizButtons = document.querySelectorAll('.quiz-btn');
+        const quizModal = new bootstrap.Modal(document.getElementById('quizModal'));
+        const confirmQuizBtn = document.getElementById('confirmQuizBtn');
+
+        quizButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const quizUrl = this.getAttribute('href');
+                confirmQuizBtn.setAttribute('href', quizUrl);
+                quizModal.show();
+            });
+        });
+
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.classList.contains('quiz-btn')) {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                    this.disabled = true;
+
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }, 1000);
+                }
+            });
+        });
+    });
+</script>

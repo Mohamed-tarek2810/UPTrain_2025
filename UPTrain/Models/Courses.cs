@@ -16,7 +16,6 @@ namespace UPTrain.Models
         public string? Description { get; set; }
 
         public int CategoryId { get; set; }
-
         public Category? Category { get; set; }
 
         [Required]
@@ -37,11 +36,14 @@ namespace UPTrain.Models
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
 
+        // ✅ Course → Lessons
         public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
-        public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
+
+        // ⛔ شيل الـ Quizzes هنا
+         public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
+
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
         public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
         public ICollection<Point> Points { get; set; } = new List<Point>();
-        // update user 
     }
 }

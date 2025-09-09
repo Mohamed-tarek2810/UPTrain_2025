@@ -8,6 +8,8 @@
         public int CourseId { get; set; }
         public Courses Course { get; set; } = null!;
 
+
+
         public ICollection<Question> Questions { get; set; } = new List<Question>();
     }
 }

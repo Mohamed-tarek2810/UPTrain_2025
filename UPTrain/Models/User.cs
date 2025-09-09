@@ -20,6 +20,7 @@ namespace UPTrain.Models
         public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
         public ICollection<Point> Points { get; set; } = new List<Point>();
         public ICollection<UserBadge> UserBadges { get; set; } = new List<UserBadge>();
+        public ICollection<UserLesson> UserLessons { get; set; } = new List<UserLesson>();
 
     }
     public enum UserRole

@@ -51,7 +51,7 @@
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 1rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #06BBCC 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -62,7 +62,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        background: linear-gradient(135deg, #06BBCC 100%);
         color: white;
         padding: 0.5rem 1rem;
         border-radius: 25px;
@@ -108,7 +108,7 @@
 
     .stat-value {
         font-weight: 700;
-        color: #4f46e5;
+        color: #06BBCC;
         background: rgba(79, 70, 229, 0.1);
         padding: 0.3rem 0.8rem;
         border-radius: 20px;
@@ -127,7 +127,7 @@
     .course-preview {
         position: relative;
         height: 200px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #06BBCC 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -225,7 +225,7 @@
         }
 
     .btn-enroll {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
         color: white;
         border: none;
         padding: 0.75rem 2rem;
@@ -290,7 +290,7 @@
 
     }
 
-    /* تأثيرات إضافية */
+   
     .bounce-in {
         animation: bounceIn 0.8s ease-out;
     }
@@ -355,11 +355,48 @@
             background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
         }
 
+    .btn-back,
+    .btn-back-blue {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-back {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ccc;
+    }
+
+        .btn-back:hover {
+            background-color: #e9ecef;
+            color: #000;
+        }
+
+    /* Lessons Button Blue */
+    .btn-back-blue {
+        background-color: #007bff; 
+        color: #fff;
+        border: 1px solid #007bff;
+    }
+
+        .btn-back-blue:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+            color: #fff;
+        }
+
 </style>
 
 <div class="course-details-container">
     <div class="course-grid">
-        <!-- المحتوى الرئيسي -->
+    
         <div class="main-content-card bounce-in">
             <img src="~/images/@Model.ImageUrl"
                  class="course-image" alt="@Model.Title"
@@ -384,7 +421,7 @@
                             <i class="bi bi-person-fill"></i>
                             Created By
                         </div>
-                        <div class="stat-value">@Model.CreatedBy?.UserName</div>
+                        <div class="stat-value">@Model.CreatedBy?.FullName</div>
                     </div>
 
                     <div class="stat-item">
@@ -446,7 +483,7 @@
             </div>
         </div>
 
-        <!-- الشريط الجانبي -->
+     
         <div class="sidebar-card fade-in">
             <div class="course-preview">
                 <div class="preview-icon">
@@ -457,13 +494,13 @@
             </div>
 
             <div class="sidebar-content">
-                <!-- معلومات المنشئ -->
+                
                 <div class="creator-info">
                     <div class="creator-label">Course Instructor</div>
-                    <div class="creator-name">@Model.CreatedBy?.UserName</div>
+                    <div class="creator-name">@Model.CreatedBy?.FullName</div>
                 </div>
 
-                <!-- إحصائيات سريعة -->
+              
                 <div class="quick-stats">
                     <div class="quick-stat">
                         <div class="quick-stat-number">@Model.Price</div>
@@ -489,6 +526,13 @@
                         <i class="bi bi-arrow-left"></i>
                         Back
                     </a>
+
+                 
+                    <a asp-area="Customer" asp-controller="Lesson" asp-action="CourseLessons" asp-route-courseId="@Model.CourseId" class="btn btn-outline-primary">
+                        <i class="fas fa-book me-2"></i>
+                        View Course Lessons
+                    </a>
+
                     <form asp-area="Customer" asp-controller="Payments" asp-action="CreateCheckoutSession" method="post">
                         <input type="hidden" name="courseId" value="@Model.CourseId" />
                         <input type="hidden" name="courseName" value="@Model.Title" />
@@ -505,7 +549,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // تأثير hover على الصورة
+      
         const courseImage = document.querySelector('.course-image');
         if (courseImage) {
             courseImage.addEventListener('mouseenter', function() {
@@ -518,7 +562,7 @@
             });
         }
 
-        // تأثير على إحصائيات سريعة
+       
         const quickStats = document.querySelectorAll('.quick-stat');
         quickStats.forEach((stat, index) => {
             stat.addEventListener('mouseenter', function() {
@@ -533,7 +577,6 @@
             });
         });
 
-        // تأثير نبضة على زر التسجيل
         const enrollBtn = document.querySelector('.btn-enroll');
         if (enrollBtn) {
             setInterval(() => {
@@ -544,7 +587,7 @@
             }, 3000);
         }
 
-        // تأثير على عناصر الإحصائيات
+    
         const statItems = document.querySelectorAll('.stat-item');
         statItems.forEach(item => {
             item.addEventListener('mouseenter', function() {
