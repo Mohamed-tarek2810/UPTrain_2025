@@ -4,6 +4,10 @@
     ViewData["Title"] = "Lessons of " + ViewBag.Title;
     var courseId = ViewBag.CourseId;
     var Title = ViewBag.Title;
+    var completedLessons = ViewBag.CompletedLessons as List<int> ?? new List<int>();
+    var totalLessons = Model.Count();
+    var completedCount = completedLessons.Count;
+    var progressPercentage = totalLessons > 0 ? (completedCount * 100) / totalLessons : 0;
 }
 
 <div class="row mb-4">
@@ -20,7 +24,7 @@
                 <div class="col-md-4 text-end">
                     <div class="badge bg-white text-primary fs-6 px-3 py-2">
                         <i class="fas fa-graduation-cap me-1"></i>
-                        @Model.Count() lessons
+                        @totalLessons lessons
                     </div>
                 </div>
             </div>
@@ -31,24 +35,41 @@
 @if (Model.Any())
 {
     <div class="row g-4">
-        @foreach (var lesson in Model)
+        @foreach (var lesson in Model.OrderBy(l => l.OrderIndex))
         {
+            var isCompleted = completedLessons.Contains(lesson.LessonId);
             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12">
-                <div class="card shadow-lg border-0 h-100 lesson-card">
-                    <div class="card-header bg-gradient-info text-white p-3">
-                        <div class="d-flex align-items-center">
-                            <div class="lesson-number-badge me-3">
-                                <span class="badge bg-white text-info rounded-circle p-2 fs-6">
-                                    @lesson.OrderIndex
-                                </span>
+                <div class="card shadow-lg border-0 h-100 lesson-card @(isCompleted ? "completed-lesson" : "")">
+                    <div class="card-header @(isCompleted ? "bg-gradient-success" : "bg-gradient-info") text-white p-3">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="lesson-number-badge me-3">
+                                    <span class="badge bg-white @(isCompleted ? "text-success" : "text-info") rounded-circle p-2 fs-6"
+                                          data-lesson-order="@lesson.OrderIndex">
+                                        @if (isCompleted)
+                                        {
+                                            <i class="fas fa-check"></i>
+                                        }
+                                        else
+                                        {
+                                            @lesson.OrderIndex
+                                        }
+                                    </span>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">@lesson.Title</h5>
+                                    <small class="opacity-8">
+                                        <i class="fas fa-sort-numeric-up me-1"></i>
+                                        Order: @lesson.OrderIndex
+                                    </small>
+                                </div>
                             </div>
-                            <div>
-                                <h5 class="mb-1">@lesson.Title</h5>
-                                <small class="opacity-8">
-                                    <i class="fas fa-sort-numeric-up me-1"></i>
-                                    Order: @lesson.OrderIndex
-                                </small>
-                            </div>
+                            @if (isCompleted)
+                            {
+                                <div class="completion-badge">
+                                    <i class="fas fa-medal text-warning fs-4" title="Completed"></i>
+                                </div>
+                            }
                         </div>
                     </div>
 
@@ -62,7 +83,7 @@
                             <p class="text-muted mb-3">Lesson content will be available soon...</p>
                         }
 
-                        <div class="row g-2">
+                        <div class="row g-2 mb-3">
                             <div class="col-6 text-center">
                                 @if (!string.IsNullOrEmpty(lesson.VideoUrl))
                                 {
@@ -75,11 +96,29 @@
                                     <div class="small text-muted mt-1">No Video</div>
                                 }
                             </div>
-                            @* <div class="col-6 text-center"> *@
-                            @*     <i class="fas fa-question-circle text-warning fs-5"></i> *@
-                            @*     <div class="small text-muted mt-1">Quiz</div> *@
-                            @* </div> *@
+                            <div class="col-6 text-center">
+                                @if (isCompleted)
+                                {
+                                    <i class="fas fa-check-circle text-success fs-5"></i>
+                                    <div class="small text-success mt-1">Completed</div>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-clock text-warning fs-5"></i>
+                                    <div class="small text-muted mt-1">Pending</div>
+                                }
+                            </div>
                         </div>
+
+                        @if (!string.IsNullOrEmpty(lesson.VideoUrl))
+                        {
+                            // <div class="mb-3">
+                            //     <button type="button" class="btn btn-outline-primary btn-sm w-100 mb-2"
+                            //             onclick="playVideo('@lesson.VideoUrl', '@lesson.Title')">
+                            //         <i class="fas fa-play me-2"></i>Watch Video
+                            //     </button>
+                            // </div>
+                        }
                     </div>
 
                     <div class="card-footer bg-transparent border-0 p-4 pt-0">
@@ -88,10 +127,33 @@
                                asp-controller="Lesson"
                                asp-action="Details"
                                asp-route-id="@lesson.LessonId"
-                               class="btn btn-primary btn-sm">
+                               class="btn @(isCompleted ? "btn-outline-primary" : "btn-primary") btn-sm">
                                 <i class="fas fa-eye me-2"></i>
                                 View Lesson
                             </a>
+
+                            @if (!isCompleted)
+                            {
+                                <button type="button"
+                                        class="btn btn-success btn-sm complete-lesson-btn"
+                                        data-lesson-id="@lesson.LessonId"
+                                        data-course-id="@courseId"
+                                        onclick="markAsComplete(this)">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    Mark as Complete
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm uncomplete-lesson-btn"
+                                        data-lesson-id="@lesson.LessonId"
+                                        data-course-id="@courseId"
+                                        onclick="markAsIncomplete(this)">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Mark as Incomplete
+                                </button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -103,33 +165,49 @@
     <div class="row mt-5">
         <div class="col-12">
             <div class="card border-0 shadow">
-                <div class="card-body p-4 d-flex align-items-center justify-content-between flex-wrap">
-                    <div class="progress-container flex-grow-1 me-3">
-                        <h5 class="card-title mb-3">
-                            <i class="fas fa-chart-line me-2 text-success"></i>
-                            Your Progress
-                        </h5>
-                        <div class="progress mb-2" style="height: 10px;">
-                            <div class="progress-bar bg-gradient-success progress-bar-striped progress-bar-animated"
-                                 role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <div class="progress-container">
+                                <h5 class="card-title mb-3">
+                                    <i class="fas fa-chart-line me-2 text-success"></i>
+                                    Your Progress
+                                </h5>
+                                <div class="progress mb-2" style="height: 15px;">
+                                    <div class="progress-bar bg-gradient-success progress-bar-striped @(progressPercentage > 0 ? "progress-bar-animated" : "")"
+                                         role="progressbar"
+                                         style="width: @progressPercentage%"
+                                         aria-valuenow="@progressPercentage"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100"
+                                         id="progressBar">
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted" id="progressText">@completedCount of @totalLessons lessons completed</small>
+                                    <small class="text-success" id="progressPercentage">@progressPercentage%</small>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <small class="text-muted">0 of @Model.Count() lessons completed</small>
-                            <small class="text-success">0%</small>
+                        <div class="col-lg-4 text-center mt-3 mt-lg-0">
+                            <div class="quiz-button-container">
+                                @if (progressPercentage >= 90)
+                                {
+                                    <a href="@Url.Action("StartQuiz", "Lesson", new { courseId = ViewBag.CourseId })"
+                                       class="btn btn-lg btn-warning px-4 quiz-btn">
+                                        <i class="fas fa-brain me-2"></i>
+                                        Start Course Test
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-lg btn-secondary px-4 quiz-btn" disabled>
+                                        <i class="fas fa-lock me-2"></i>
+                                        Complete 90% to unlock test
+                                    </button>
+                                }
+                            </div>
                         </div>
-                    </div>
-
-                 
-                    <div class="quiz-button-container mt-3 mt-md-0">
-                        <a asp-area="Customer"
-                           asp-controller="Lesson"
-                           asp-action="LessonQuiz"
-                           asp-route-lessonId="@Model.First().LessonId"
-                           class="btn btn-lg btn-warning px-4 quiz-btn">
-                            <i class="fas fa-brain me-2"></i>
-                            Start Course Test
-                        </a>
                     </div>
                 </div>
             </div>
@@ -158,11 +236,31 @@ else
     </div>
 }
 
+<!-- Video Player Modal -->
+<div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-labelledby="videoPlayerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="videoPlayerModalLabel">
+                    <i class="fas fa-play-circle me-2"></i>Video Player
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="video-container">
+                    <iframe id="videoFrame" src="" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     .lesson-card {
         transition: all 0.3s ease;
         border-radius: 15px;
         overflow: hidden;
+        position: relative;
     }
 
         .lesson-card:hover {
@@ -170,12 +268,21 @@ else
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
 
+    .completed-lesson {
+        border: 2px solid #28a745;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.05), rgba(40, 167, 69, 0.1));
+    }
+
     .bg-gradient-primary {
-        background: linear-gradient(45deg, #11998e 100%);
+        background: linear-gradient(45deg, #11998e, #38ef7d);
     }
 
     .bg-gradient-info {
         background: linear-gradient(45deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
     }
 
     .lesson-number-badge {
@@ -189,16 +296,47 @@ else
         transition: all 0.3s ease;
     }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
         }
 
-    .quiz-btn:hover {
+    .quiz-btn:hover:not(:disabled) {
         background-color: #ffc107;
         border-color: #ffc107;
         color: #000;
         transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
     }
+
+    .completion-badge {
+        animation: bounce 2s infinite;
+    }
+
+
+
+    {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+
+    }
+
+    .complete-lesson-btn {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        border: none;
+    }
+
+        .complete-lesson-btn:hover {
+            background: linear-gradient(45deg, #218838, #1ea671);
+            transform: scale(1.05);
+        }
 
     .empty-state i {
         opacity: 0.5;
@@ -212,22 +350,268 @@ else
         min-width: 0;
     }
 
-    .quiz-button-container {
-        display: flex;
-        align-items: center;
+    .video-container {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%;
+    }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+    .btn.loading {
+        pointer-events: none;
+    }
+
+        .btn.loading::after {
+            content: "";
+            width: 16px;
+            height: 16px;
+            margin-left: 8px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+    {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+
     }
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const quizButtons = document.querySelectorAll('.quiz-btn');
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        quizButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const quizUrl = this.getAttribute('href');
-                window.location.href = quizUrl; // Redirect to LessonQuiz
+<script>
+    let completedLessons = @Html.Raw(Json.Serialize(completedLessons));
+    const totalLessons = @totalLessons;
+    const courseId = @courseId;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateProgressDisplay();
+
+        const quizButton = document.querySelector('.quiz-btn');
+        if (quizButton && !quizButton.disabled) {
+            quizButton.addEventListener('click', function(e) {
+                console.log('Quiz button clicked!');
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
             });
-        });
+        }
     });
+
+    function playVideo(videoUrl, title) {
+        if (!videoUrl) return;
+
+        const modal = new bootstrap.Modal(document.getElementById('videoPlayerModal'));
+        const iframe = document.getElementById('videoFrame');
+        const modalTitle = document.getElementById('videoPlayerModalLabel');
+
+        modalTitle.innerHTML = `<i class="fas fa-play-circle me-2"></i>${title}`;
+
+        let embedUrl = convertToEmbedUrl(videoUrl);
+        iframe.src = embedUrl;
+        modal.show();
+
+        document.getElementById('videoPlayerModal').addEventListener('hidden.bs.modal', function () {
+            iframe.src = '';
+        });
+    }
+
+    function convertToEmbedUrl(url) {
+        const youtubeMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+        if (youtubeMatch) {
+            const videoId = youtubeMatch[1];
+            return `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1`;
+        }
+
+        const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+        if (vimeoMatch) {
+            const videoId = vimeoMatch[1];
+            return `https://player.vimeo.com/video/${videoId}?autoplay=1`;
+        }
+
+        return url;
+    }
+
+    function markAsComplete(button) {
+        const lessonId = parseInt(button.getAttribute('data-lesson-id'));
+
+        button.classList.add('loading');
+        button.disabled = true;
+
+        setTimeout(() => {
+            if (!completedLessons.includes(lessonId)) {
+                completedLessons.push(lessonId);
+            }
+
+            updateLessonCard(button, true);
+            updateProgressDisplay();
+
+            Swal.fire({
+                title: 'Lesson Completed!',
+                text: 'Great job! Keep up the excellent work.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            button.classList.remove('loading');
+            button.disabled = false;
+        }, 500);
+    }
+
+    function markAsIncomplete(button) {
+        const lessonId = parseInt(button.getAttribute('data-lesson-id'));
+
+        button.classList.add('loading');
+        button.disabled = true;
+
+        setTimeout(() => {
+            const index = completedLessons.indexOf(lessonId);
+            if (index > -1) {
+                completedLessons.splice(index, 1);
+            }
+
+            updateLessonCard(button, false);
+            updateProgressDisplay();
+
+            Swal.fire({
+                title: 'Lesson Marked as Incomplete',
+                text: 'You can complete it again when ready.',
+                icon: 'info',
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            button.classList.remove('loading');
+            button.disabled = false;
+        }, 500);
+    }
+
+    function updateLessonCard(button, isCompleted) {
+        const card = button.closest('.lesson-card');
+        const cardHeader = card.querySelector('.card-header');
+        const badge = card.querySelector('.lesson-number-badge span');
+        const statusIcon = card.querySelector('.col-6:last-child i');
+        const statusText = card.querySelector('.col-6:last-child .small');
+        const viewButton = card.querySelector('a[href*="Details"]');
+        const completionBadge = card.querySelector('.completion-badge');
+
+        if (isCompleted) {
+            card.classList.add('completed-lesson');
+            cardHeader.className = 'card-header bg-gradient-success text-white p-3';
+            badge.className = 'badge bg-white text-success rounded-circle p-2 fs-6';
+            badge.innerHTML = '<i class="fas fa-check"></i>';
+            statusIcon.className = 'fas fa-check-circle text-success fs-5';
+            statusText.className = 'small text-success mt-1';
+            statusText.textContent = 'Completed';
+            viewButton.className = 'btn btn-outline-primary btn-sm';
+
+            if (!completionBadge) {
+                const badgeDiv = document.createElement('div');
+                badgeDiv.className = 'completion-badge';
+                badgeDiv.innerHTML = '<i class="fas fa-medal text-warning fs-4" title="Completed"></i>';
+                cardHeader.querySelector('.d-flex').appendChild(badgeDiv);
+            }
+
+            button.outerHTML = `
+                <button type="button"
+                        class="btn btn-outline-danger btn-sm uncomplete-lesson-btn"
+                        data-lesson-id="${button.getAttribute('data-lesson-id')}"
+                        data-course-id="${button.getAttribute('data-course-id')}"
+                        onclick="markAsIncomplete(this)">
+                    <i class="fas fa-undo me-2"></i>Mark as Incomplete
+                </button>
+            `;
+        } else {
+            card.classList.remove('completed-lesson');
+            cardHeader.className = 'card-header bg-gradient-info text-white p-3';
+            badge.className = 'badge bg-white text-info rounded-circle p-2 fs-6';
+            badge.textContent = badge.getAttribute('data-lesson-order');
+            statusIcon.className = 'fas fa-clock text-warning fs-5';
+            statusText.className = 'small text-muted mt-1';
+            statusText.textContent = 'Pending';
+            viewButton.className = 'btn btn-primary btn-sm';
+
+            if (completionBadge) {
+                completionBadge.remove();
+            }
+
+            button.outerHTML = `
+                <button type="button"
+                        class="btn btn-success btn-sm complete-lesson-btn"
+                        data-lesson-id="${button.getAttribute('data-lesson-id')}"
+                        data-course-id="${button.getAttribute('data-course-id')}"
+                        onclick="markAsComplete(this)">
+                    <i class="fas fa-check-circle me-2"></i>Mark as Complete
+                </button>
+            `;
+        }
+    }
+
+    function updateProgressDisplay() {
+        const completedCount = completedLessons.length;
+        const progressPercentage = totalLessons > 0 ? Math.round((completedCount * 100) / totalLessons) : 0;
+
+        const progressBar = document.getElementById('progressBar');
+        if (progressBar) {
+            progressBar.style.width = progressPercentage + '%';
+            progressBar.setAttribute('aria-valuenow', progressPercentage);
+
+            if (progressPercentage > 0) {
+                progressBar.classList.add('progress-bar-animated');
+            } else {
+                progressBar.classList.remove('progress-bar-animated');
+            }
+        }
+
+        const progressText = document.getElementById('progressText');
+        if (progressText) {
+            progressText.textContent = `${completedCount} of ${totalLessons} lessons completed`;
+        }
+
+        const progressPercentageElement = document.getElementById('progressPercentage');
+        if (progressPercentageElement) {
+            progressPercentageElement.textContent = progressPercentage + '%';
+        }
+
+        const quizButtonContainer = document.querySelector('.quiz-button-container');
+        if (quizButtonContainer) {
+            if (progressPercentage >= 90) {
+                quizButtonContainer.innerHTML = `
+                    <a href="@Url.Action("StartQuiz", "Lesson", new { courseId = ViewBag.CourseId })"
+                       class="btn btn-lg btn-warning px-4 quiz-btn">
+                        <i class="fas fa-brain me-2"></i>
+                        Start Course Test
+                    </a>
+                `;
+                const newQuizButton = quizButtonContainer.querySelector('.quiz-btn');
+                if (newQuizButton) {
+                    newQuizButton.addEventListener('click', function(e) {
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                    });
+                }
+            } else {
+                quizButtonContainer.innerHTML = `
+                    <button class="btn btn-lg btn-secondary px-4 quiz-btn" disabled>
+                        <i class="fas fa-lock me-2"></i>
+                        Complete 90% to unlock test
+                    </button>
+                `;
+            }
+        }
+    }
 </script>

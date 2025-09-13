@@ -2,16 +2,20 @@
 @{
     ViewData["Title"] = "Start Quiz";
 }
-
 <div class="container mt-5">
     <div class="card shadow-lg border-0 rounded-3">
         <div class="card-header bg-primary text-white text-center">
             <h3>@Model.Title - Quiz</h3>
         </div>
         <div class="card-body">
-            <form asp-area="Customer" asp-controller="Quiz" asp-action="SubmitQuiz" method="post">
-                <input type="hidden" name="lessonId" value="@ViewBag.Lesson.LessonId" />
 
+          
+            <div class="alert alert-info text-center fw-bold mb-4">
+                 You need at least 75% to unlock your certificate
+            </div>
+
+            <form asp-area="Customer" asp-controller="Lesson" asp-action="SubmitQuiz" method="post">
+                <input type="hidden" name="courseId" value="@ViewBag.Course.CourseId" />
                 @if (ViewBag.Questions != null && ViewBag.Questions.Count > 0)
                 {
                     foreach (var question in ViewBag.Questions)
@@ -20,19 +24,19 @@
                             <h5>@question.QuestionText</h5>
                             <div>
                                 <label>
-                                    <input type="radio" name="answers[@question.QuestionId]" value="OptionA" />
+                                    <input type="radio" name="question_@question.QuestionId" value="A" />
                                     @question.OptionA
                                 </label><br />
                                 <label>
-                                    <input type="radio" name="answers[@question.QuestionId]" value="OptionB" />
+                                    <input type="radio" name="question_@question.QuestionId" value="B" />
                                     @question.OptionB
                                 </label><br />
                                 <label>
-                                    <input type="radio" name="answers[@question.QuestionId]" value="OptionC" />
+                                    <input type="radio" name="question_@question.QuestionId" value="C" />
                                     @question.OptionC
                                 </label><br />
                                 <label>
-                                    <input type="radio" name="answers[@question.QuestionId]" value="OptionD" />
+                                    <input type="radio" name="question_@question.QuestionId" value="D" />
                                     @question.OptionD
                                 </label>
                             </div>
@@ -45,7 +49,6 @@
                         No questions available for this quiz.
                     </div>
                 }
-
                 <div class="text-center">
                     <button type="submit" class="btn btn-success px-4">
                         <i class="fas fa-check-circle me-2"></i> Submit Quiz

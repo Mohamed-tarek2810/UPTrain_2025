@@ -18,8 +18,17 @@
                 Percentage: <span class="text-success">@ViewBag.Percentage %</span>
             </p>
 
-            <hr />
+       
+            @if (ViewBag.Percentage >= 75)
+            {
+                <div class="text-center mt-4">
+                    <a asp-area="Customer" asp-controller="Lesson" asp-action="Certificate" class="btn btn-lg btn-warning fw-bold">
+                        🎓 Your Certificate
+                    </a>
+                </div>
+            }
 
+            <hr />
             <h5>Review Questions:</h5>
             <ol class="list-group list-group-numbered">
                 @foreach (var question in ViewBag.Questions)
@@ -28,28 +37,23 @@
                     ? ViewBag.UserAnswers[question.QuestionId]
                     : "No Answer";
 
-                    bool isCorrect = false;
-
-                    if (Enum.TryParse<AnswerOption>(userAnswer, out AnswerOption selected))
+                    string correctAnswerText = question.CorrectAnswer switch
                     {
-                        isCorrect = selected == question.CorrectAnswer;
-                    }
+                        AnswerOption.A => question.OptionA,
+                        AnswerOption.B => question.OptionB,
+                        AnswerOption.C => question.OptionC,
+                        AnswerOption.D => question.OptionD,
+                        _ => "N/A"
+                    };
 
                     <li class="list-group-item">
-                        <p><strong>@question.Text</strong></p>
-                        <p>
-                            Your Answer:
-                            <span class="@(isCorrect ? "text-success" : "text-danger")">
-                                @userAnswer
-                            </span>
-                        </p>
+                        <p><strong>@question.QuestionText</strong></p>
                         <p>
                             Correct Answer:
-                            <span class="text-success">@question.CorrectAnswer</span>
+                            <span class="text-success fw-bold">@correctAnswerText</span>
                         </p>
                     </li>
                 }
-
             </ol>
         </div>
     </div>
