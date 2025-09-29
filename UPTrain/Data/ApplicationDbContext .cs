@@ -23,6 +23,8 @@ namespace UPTrain.Data
         public DbSet<UserBadge> UserBadges { get; set; }
         public DbSet<UserLesson> UserLessons { get; set; }
 
+        public DbSet<LessonCompletion> LessonCompletions { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

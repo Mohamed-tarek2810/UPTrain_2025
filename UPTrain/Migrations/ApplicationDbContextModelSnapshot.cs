@@ -380,6 +380,33 @@ namespace UPTrain.Migrations
                     b.ToTable("Lessons");
                 });
 
+            modelBuilder.Entity("UPTrain.Models.LessonCompletions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LessonCompletion");
+                });
+
             modelBuilder.Entity("UPTrain.Models.Point", b =>
                 {
                     b.Property<int>("PointId")
@@ -737,6 +764,25 @@ namespace UPTrain.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("UPTrain.Models.LessonCompletions", b =>
+                {
+                    b.HasOne("UPTrain.Models.Lesson", "Lesson")
+                        .WithMany("LessonCompletions")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UPTrain.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("UPTrain.Models.Point", b =>
                 {
                     b.HasOne("UPTrain.Models.Courses", "Course")
@@ -836,6 +882,8 @@ namespace UPTrain.Migrations
 
             modelBuilder.Entity("UPTrain.Models.Lesson", b =>
                 {
+                    b.Navigation("LessonCompletions");
+
                     b.Navigation("UserLessons");
                 });
 

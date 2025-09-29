@@ -3,27 +3,37 @@ using UPTrain.IRepositories;
 using UPTrain.Models;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Security.Claims;
+using UPTrain.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UPTrain.Controllers
 {
     [Area("Customer")]
+    [Authorize]
     public class LessonController : Controller
     {
         private readonly ILessonRepository _lessonRepository;
         private readonly IQuizRepository _quizRepository;
         private readonly IQuestionRepository _questionRepository;
         private readonly ICourseRepository _courseRepository;
+        private readonly ILessonCompletionsRepository _lessonCompletionsRepository;
+        private readonly ILogger<LessonController> _logger;
 
         public LessonController(
             ILessonRepository lessonRepository,
             IQuizRepository quizRepository,
             IQuestionRepository questionRepository,
-            ICourseRepository courseRepository)
+            ICourseRepository courseRepository,
+            ILessonCompletionsRepository lessonCompletionRepository,
+            ILogger<LessonController> logger)
         {
             _lessonRepository = lessonRepository;
             _quizRepository = quizRepository;
             _questionRepository = questionRepository;
             _courseRepository = courseRepository;
+            _lessonCompletionsRepository = lessonCompletionRepository;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Lessons()
@@ -57,7 +67,6 @@ namespace UPTrain.Controllers
             }
 
             var quiz = await _quizRepository.GetOneAsync(q => q.CourseId == lesson.CourseId);
-
             ViewBag.Quiz = quiz;
 
             return View("Details", lesson);
@@ -134,6 +143,76 @@ namespace UPTrain.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkAsComplete([FromBody] LessonCompletionRequest request)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Json(new { success = false, message = "User not authenticated" });
+                }
 
+                var existingCompletion = await _lessonCompletionsRepository
+                    .GetOneAsync(lc => lc.LessonId == request.LessonId && lc.UserId == userId);
+
+                if (existingCompletion == null)
+                {
+                    var completion = new LessonCompletion
+                    {
+                        LessonId = request.LessonId,
+                        UserId = userId,
+                        CompletedAt = DateTime.UtcNow
+                    };
+
+                    await _lessonCompletionsRepository.AddAsync(completion);
+                }
+
+                return Json(new { success = true, message = "Lesson marked as complete" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error marking lesson as complete");
+                return Json(new { success = false, message = "An error occurred while processing your request" });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkAsIncomplete([FromBody] LessonCompletionRequest request)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Json(new { success = false, message = "User not authenticated" });
+                }
+
+                var existingCompletion = await _lessonCompletionsRepository
+                    .GetOneAsync(lc => lc.LessonId == request.LessonId && lc.UserId == userId);
+
+                if (existingCompletion != null)
+                {
+                    await _lessonCompletionsRepository.Delete(existingCompletion);
+                }
+
+                return Json(new { success = true, message = "Lesson marked as incomplete" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error marking lesson as incomplete");
+                return Json(new { success = false, message = "An error occurred while processing " });
+            }
+        }
+    }
+
+
+    public class LessonCompletionRequest
+    {
+        public int LessonId { get; set; }
+        public int CourseId { get; set; }
     }
 }

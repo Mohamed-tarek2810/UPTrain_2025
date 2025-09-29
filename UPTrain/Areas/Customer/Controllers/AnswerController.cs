@@ -2,10 +2,12 @@
 using UPTrain.IRepositories;
 using UPTrain.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UPTrain.Controllers
 {
     [Area("Customer")]
+    [Authorize]
     public class AnswerController : Controller
     {
         private readonly IAnswerRepository _answerRepository;

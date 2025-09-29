@@ -102,7 +102,7 @@ namespace UPTrain.Areas.Identity.Controllers
                     if (user.Role == UserRole.Admin)
                         return RedirectToAction("Index", "Home", new { area = "Admin" });
 
-                    return RedirectToAction("Index", "Home", new { area = "Customer" });
+                    return RedirectToAction("Courses", "Courses", new { area = "Customer" });
                 }
                 else
                 {

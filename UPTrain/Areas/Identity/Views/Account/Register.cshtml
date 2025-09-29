@@ -38,7 +38,7 @@
 
             <button type="submit" class="btn btn-gradient w-100 py-2 fs-5 fw-bold mb-3">Register</button>
 
-            <p class="text-center small">
+            <p class="text-center small text-white">
                 Already have an account?
                 <a asp-area="Identity" asp-controller="Account" asp-action="Login" class="text-decoration-none text-gradient fw-semibold">Login</a>
             </p>
@@ -60,27 +60,42 @@
 
 <style>
     .register-bg {
-        background: linear-gradient(rgba(255,193,7,0.6), rgba(13,110,253,0.6)), url('/img/cat-4.jpg') no-repeat center / cover;
-        background-size: cover;
+        background-color: #f0f2f5;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/img/unnamed.jpg');
+        background-repeat: no-repeat;
         background-position: center;
+        background-size: cover;
     }
 
 
-   
     .register-card {
         width: 100%;
         max-width: 420px;
         border-radius: 20px;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        color: #fff;
     }
 
-
-    .text-gradient {
+    .text-gradient,
+    .text-gradient:hover {
         background: linear-gradient(45deg, #ffc107, #0d6efd);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+    }
+
+    .form-label,
+    .form-check-label {
+        color: #fff !important;
+    }
+
+    .text-center.small {
+        color: #fff;
+    }
+
+    .text-light {
+        color: #dee2e6 !important;
     }
 
 
@@ -99,10 +114,17 @@
     .form-control {
         border-radius: 12px;
         padding: 0.75rem 1rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        color: #fff;
     }
 
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
         .form-control:focus {
-            box-shadow: 0 0 10px rgba(255, 193, 7, 0.25);
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
             border-color: #ffc107;
         }
 </style>

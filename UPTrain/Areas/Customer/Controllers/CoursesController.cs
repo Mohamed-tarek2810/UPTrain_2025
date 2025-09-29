@@ -6,6 +6,7 @@ using UPTrain.Models;
 namespace UPTrain.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    [Authorize]
     public class CoursesController : Controller
     {
         private readonly ICourseRepository _courseRepository;

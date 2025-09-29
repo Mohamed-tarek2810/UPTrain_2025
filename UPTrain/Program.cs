@@ -37,6 +37,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 });
 //builder.AddScoped<IUserLessonRepository, UserLessonRepository>();
+builder.Services.AddScoped<ILessonCompletionsRepository, LessonCompletionsRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IPointRepository, PointRepository>();

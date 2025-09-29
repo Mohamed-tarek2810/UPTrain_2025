@@ -6,33 +6,63 @@
 }
 
 <style>
+    /* 1. التعديل: تغميق الخلفية الرئيسية (verify-bg) بزيادة التظليل إلى 0.7 */
     .verify-bg {
-        background: linear-gradient(rgba(40,167,69,0.6), rgba(13,110,253,0.6)), url('/img/cat-4.jpg') no-repeat center / cover;
-        background-size: cover;
+        /* إزالة التدرج اللوني القديم واستبداله بتظليل داكن موحد بنسبة 0.7 */
+        background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), /* تظليل أغمق */
+        url('/img/unnamed.jpg'); /* الصورة الأصلية */
+        background-repeat: no-repeat;
         background-position: center;
+        background-size: cover;
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
+    /* 2. التعديل: جعل البطاقة شفافة وتغيير لون النصوص إلى الأبيض */
     .verify-card {
         width: 100%;
         max-width: 420px;
         border-radius: 20px;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.3);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        /* جعل الخلفية شبه شفافة */
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(15px); /* زيادة التمويه */
+        border: 1px solid rgba(255, 255, 255, 0.5); /* حد أبيض أوضح */
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         padding: 30px;
+        color: #fff; /* لون النصوص الأساسي باللون الأبيض */
     }
 
+    /* 3. تعديل الألوان لكي تظهر على الخلفية الشفافة */
     .text-gradient {
+        /* استخدام التدرج اللوني الخاص بك */
         background: linear-gradient(45deg, #28a745, #0d6efd);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
+    .form-label {
+        color: #fff !important; /* لون Labels باللون الأبيض */
+        font-weight: 600 !important;
+    }
+
+    /* 4. جعل حقول الإدخال شفافة */
+    .form-control {
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        background-color: rgba(255, 255, 255, 0.1); /* خلفية حقل الإدخال شفافة */
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        color: #fff; /* لون النص المدخل */
+        transition: 0.3s;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5); /* ظل بلون التدرج */
+            border-color: #28a745;
+        }
+
+    /* ترك ستايل الزر كما هو */
     .btn-gradient {
         background: linear-gradient(45deg, #28a745, #0d6efd);
         border: none;
@@ -46,17 +76,17 @@
             transform: translateY(-2px);
         }
 
-    .form-control {
-        border-radius: 12px;
-        padding: 0.75rem 1rem;
-        border: 1px solid #ccc;
-        transition: 0.3s;
+    /* جعل رابط "Back" أبيض وواضح */
+    .text-center a {
+        color: #fff !important;
+        font-weight: 600;
+        transition: 0.2s;
     }
 
-        .form-control:focus {
-            box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
-            border-color: #28a745;
+        .text-center a:hover {
+            color: #28a745 !important;
         }
+
 </style>
 
 <div class="verify-bg">

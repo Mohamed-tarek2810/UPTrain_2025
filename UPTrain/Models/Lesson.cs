@@ -11,10 +11,8 @@
         public int CourseId { get; set; }
         public Courses Course { get; set; } = null!;
 
-     
-   
-
+        
         public ICollection<UserLesson> UserLessons { get; set; } = new List<UserLesson>();
+        public ICollection<LessonCompletion> LessonCompletions { get; set; } = new List<LessonCompletion>();
     }
 }
-

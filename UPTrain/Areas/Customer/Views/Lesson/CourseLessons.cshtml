@@ -10,6 +10,8 @@
     var progressPercentage = totalLessons > 0 ? (completedCount * 100) / totalLessons : 0;
 }
 
+@Html.AntiForgeryToken()
+
 <div class="row mb-4">
     <div class="col-12">
         <div class="bg-gradient-primary rounded-3 p-4 text-white">
@@ -382,6 +384,7 @@ else
             display: inline-block;
         }
 
+
     {
         transform: rotate(0deg);
     }
@@ -448,57 +451,135 @@ else
 
     function markAsComplete(button) {
         const lessonId = parseInt(button.getAttribute('data-lesson-id'));
+        const courseId = parseInt(button.getAttribute('data-course-id'));
 
         button.classList.add('loading');
         button.disabled = true;
 
-        setTimeout(() => {
-            if (!completedLessons.includes(lessonId)) {
-                completedLessons.push(lessonId);
+        // Get CSRF token
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        // AJAX call to server
+        fetch('/Customer/Lesson/MarkAsComplete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify({
+                lessonId: lessonId,
+                courseId: courseId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update local array only after successful server update
+                if (!completedLessons.includes(lessonId)) {
+                    completedLessons.push(lessonId);
+                }
+
+                updateLessonCard(button, true);
+                updateProgressDisplay();
+
+                Swal.fire({
+                    title: 'Lesson Completed!',
+                    text: 'Great job! Keep up the excellent work.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: data.message || 'Failed to mark lesson as complete.',
+                    icon: 'error',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
             }
-
-            updateLessonCard(button, true);
-            updateProgressDisplay();
-
+        })
+        .catch(error => {
+            console.error('Error:', error);
             Swal.fire({
-                title: 'Lesson Completed!',
-                text: 'Great job! Keep up the excellent work.',
-                icon: 'success',
-                timer: 1500,
+                title: 'Error!',
+                text: 'Something went wrong. Please try again.',
+                icon: 'error',
+                timer: 2000,
                 showConfirmButton: false
             });
-
+        })
+        .finally(() => {
             button.classList.remove('loading');
             button.disabled = false;
-        }, 500);
+        });
     }
 
     function markAsIncomplete(button) {
         const lessonId = parseInt(button.getAttribute('data-lesson-id'));
+        const courseId = parseInt(button.getAttribute('data-course-id'));
 
         button.classList.add('loading');
         button.disabled = true;
 
-        setTimeout(() => {
-            const index = completedLessons.indexOf(lessonId);
-            if (index > -1) {
-                completedLessons.splice(index, 1);
+        // Get CSRF token
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        // AJAX call to server
+        fetch('/Customer/Lesson/MarkAsIncomplete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify({
+                lessonId: lessonId,
+                courseId: courseId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update local array only after successful server update
+                const index = completedLessons.indexOf(lessonId);
+                if (index > -1) {
+                    completedLessons.splice(index, 1);
+                }
+
+                updateLessonCard(button, false);
+                updateProgressDisplay();
+
+                Swal.fire({
+                    title: 'Lesson Marked as Incomplete',
+                    text: 'You can complete it again when ready.',
+                    icon: 'info',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: data.message || 'Failed to mark lesson as incomplete.',
+                    icon: 'error',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
             }
-
-            updateLessonCard(button, false);
-            updateProgressDisplay();
-
+        })
+        .catch(error => {
+            console.error('Error:', error);
             Swal.fire({
-                title: 'Lesson Marked as Incomplete',
-                text: 'You can complete it again when ready.',
-                icon: 'info',
-                timer: 1500,
+                title: 'Error!',
+                text: 'Something went wrong. Please try again.',
+                icon: 'error',
+                timer: 2000,
                 showConfirmButton: false
             });
-
+        })
+        .finally(() => {
             button.classList.remove('loading');
             button.disabled = false;
-        }, 500);
+        });
     }
 
     function updateLessonCard(button, isCompleted) {
