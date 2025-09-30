@@ -32,7 +32,7 @@ namespace UPTrain.Data
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(
-                    "Data Source=LAPTOP-F7MI2PIT\\MSSQLSERVERMO;Initial Catalog=UPTrainDB_DB;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;"
+                    "Server=db28545.public.databaseasp.net; Database=db28545; User Id=db28545; Password=5n_LB=3ex8W!; Encrypt=True; TrustServerCertificate=True; MultipleActiveResultSets=True;"
                 );
             }
         }
