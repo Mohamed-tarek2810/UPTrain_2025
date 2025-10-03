@@ -1,19 +1,81 @@
 ﻿@{
     ViewData["Title"] = "Certificate";
 }
-
 <div class="container mt-5 text-center">
     <div class="card shadow-lg border-0 rounded-3 p-5">
         <h2 class="text-success fw-bold mb-4">🎉 Congratulations! 🎉</h2>
         <p class="fs-5">You have successfully passed the quiz with excellent performance.</p>
         <p class="fs-6 text-muted">We wish you all the best in your learning journey!</p>
 
-        <div class="mt-4">
-            <img src="https://i.ibb.co/FzxwS1b/certificate-sample.png" alt="Certificate" class="img-fluid rounded shadow" style="max-width:600px;" />
+        <!-- Certificate Container with Name Overlay -->
+        <div class="mt-4 position-relative d-inline-block">
+            <img src="/img/certifcate.jpg" alt="Certificate" class="img-fluid rounded shadow" style="max-width:900px; width: 100%;" />
+
+            <!-- Trainee Name Overlay -->
+            <div class="position-absolute top-50 start-50 translate-middle" style="width: 80%;">
+                <h1 class="certificate-name" style="
+                    font-size: 3rem;
+                    font-weight: bold;
+                    color: #2c3e50;
+                    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+                    font-family: 'Georgia', serif;
+                    margin: 0;
+                ">
+                    @ViewBag.TraineeName
+                </h1>
+            </div>
         </div>
 
         <div class="mt-4">
+            <button onclick="window.print()" class="btn btn-success me-2">
+                <i class="bi bi-printer"></i> Print Certificate
+            </button>
             <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Home</a>
         </div>
     </div>
 </div>
+
+<!-- Print Styles -->
+<style>
+    @@media print {
+        .btn, .text-muted, .fs-5
+
+    {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .certificate-name {
+        font-size: 2.5rem !important;
+    }
+
+    }
+
+    /* Responsive font size for certificate name */
+    @@media (max-width: 768px) {
+        .certificate-name
+
+    {
+        font-size: 1.8rem !important;
+    }
+
+    }
+
+    @@media (max-width: 576px) {
+        .certificate-name
+
+    {
+        font-size: 1.3rem !important;
+    }
+
+    }
+</style>
